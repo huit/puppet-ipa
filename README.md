@@ -9,9 +9,6 @@ huit/puppet-ipa aims at the management and configuration of a complete IPA envir
 To start, an IPA master will be required as the beginning of the LDAP/Kerberos environment. IPA replicas can
 then be added for additional resiliancy.
 
-Please note, a load balanced configuration is not handled by this module, additional configuration is required
-if load balancing client communication or a VIP is to be used.
-
 IPA replica servers will automatically be configured with a replication agreement on the IPA master server.
 
 All nodes added as clients will automatically be added to the IPA domain.
