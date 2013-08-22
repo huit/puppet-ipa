@@ -119,6 +119,17 @@ class ipa (
     }
   }
 
+  case $::osfamily {
+    'RedHat': {
+      if $ipa::mkhomedir {
+        service { "oddjobd":
+          ensure => 'running',
+          enable => true
+        }
+      }
+    }
+  }
+
   if $ipa::autofs {
     @package { "autofs":
       ensure => installed
