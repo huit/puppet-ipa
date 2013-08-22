@@ -112,19 +112,10 @@ class ipa (
     require => Package[$ipa::svrpkg]
   }
 
-  if $ipa::sssd {
+  if $ipa::sssd and ! $ipa::cleanup {
     @service { "sssd":
       ensure => 'running',
       enable => true
-    }
-  }
-
-  case $::osfamily {
-    'RedHat': {
-      service { "oddjobd":
-        ensure => 'stopped',
-        enable => false
-      }
     }
   }
 
