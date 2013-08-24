@@ -1,4 +1,4 @@
-Facter.add("ipaadminuidnumber") do
+Facter.add(:ipaadminuidnumber) do
   setcode do
     require 'etc'
     begin

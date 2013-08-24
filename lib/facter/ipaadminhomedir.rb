@@ -1,4 +1,4 @@
-Facter.add("ipaadminhomedir") do
+Facter.add(:ipaadminhomedir) do
   setcode do
     require 'etc'
     begin
