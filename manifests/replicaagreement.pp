@@ -9,7 +9,6 @@ define ipa::replicaagreement (
   exec { "connectreplicas-${host}":
     command     => "/sbin/runuser -l admin -c \'/usr/sbin/ipa-replica-manage connect --cacert=/etc/ipa/ca.crt ${from} ${to}\'",
     unless      => "/sbin/runuser -l admin -c \'/usr/sbin/ipa-replica-manage list ${from} | /bin/grep ${to} >/dev/null 2>&1\'",
-    logoutput   => "on_failure",
-    refreshonly => true
+    logoutput   => "on_failure"
   }
 }
