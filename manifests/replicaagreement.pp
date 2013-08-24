@@ -4,7 +4,7 @@ define ipa::replicaagreement (
 ) {
 
   $pair     = split($replicapair, '[:]')
-  $replicas = split($pair, '[,]')
+  $replicas = split($pair, ',')
   $from     = $replicas[0]
   $to       = $replicas[1]
 
