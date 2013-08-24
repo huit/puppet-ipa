@@ -3,8 +3,9 @@ define ipa::replicaagreement (
   $replicapair = []
 ) {
 
-  $from = $replicapair[0]
-  $to   = $replicapair[1]
+  $pair = split($replicapair, '[:]')
+  $from = $pair[0]
+  $to   = $pair[1]
 
   exec { "connectreplicas-${host}":
     command     => "/sbin/runuser -l admin -c \'/usr/sbin/ipa-replica-manage connect --cacert=/etc/ipa/ca.crt ${from} ${to}\'",
