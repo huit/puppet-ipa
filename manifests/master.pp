@@ -154,6 +154,6 @@ class ipa::master (
   }
 
   ipa::replicaagreement { "master-${::fqdn}":
-    replicapair => [$::ipareplicaarray]
+    replicapair => is_array($::ipareplicaarray)
   }
 }
