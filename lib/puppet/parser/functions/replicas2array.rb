@@ -1,6 +1,8 @@
 module Puppet::Parser::Functions
 newfunction(:replicas2array, :type => :rvalue, :doc => '<docstring>') do |arguments|
- raise(Puppet::ParseError, "suffix(): Wrong number of arguments " + "given (#{arguments.size} for 1)") if arguments.size != 1
+ raise(Puppet::ParseError, "suffix(): Wrong number of arguments " + "given (#{arguments.size} for 1)")
+ 
+ if arguments.size != 1
 
  packed = arguments[0]
 
