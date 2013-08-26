@@ -13,4 +13,5 @@ newfunction(:replicas2array, :type => :rvalue, :doc => '<docstring>') do |argume
  unpacked = packed.split(':').collect {|pair| pair.split(',')}
 
  return unpacked
+ end
 end
