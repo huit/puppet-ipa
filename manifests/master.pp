@@ -153,7 +153,7 @@ class ipa::master (
     }
   }
 
-  $replicas = replicas2array($::ipareplicaarray)
+  $replicas = replicas2array([$::ipareplicaarray])
 
   ipa::replicaagreement { "$replicas":
   }
