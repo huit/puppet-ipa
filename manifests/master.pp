@@ -153,7 +153,8 @@ class ipa::master (
     }
   }
 
-  ipa::replicaagreement { "master-${::fqdn}":
-    replicapair => chop(inline_template("<% $::ipareplicaarray.each do |pair| %><%= pair[0] %>,<%= pair[1] %>:<% end %>"))
+  $replicas = replicas2array($::ipareplicaarray)
+
+  ipa::replicaagreement { "$replicas":
   }
 }
