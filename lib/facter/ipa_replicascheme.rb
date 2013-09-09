@@ -2,7 +2,7 @@ Facter.add(:ipa_replicascheme) do
  setcode do
    host = Facter.value(:hostname)
    domain = Facter.value(:domain)
-   ipaadminhomedir = Facter.value(:ipaadminhomedir)
+   ipaadminhomedir = Facter.value(:ipa_adminhomedir)
    if File.directory?(ipaadminhomedir)
      if host and domain
        fqdn = [host, domain].join(".")
