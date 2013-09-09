@@ -1,5 +1,5 @@
 module Puppet::Parser::Functions
-  newfunction(:ipa_string2hash, :type => :rvalue, :doc => 'This function converts a comma delimited string separated by a colon into a hash. ex. "string1,string2:string3,string4"') do |arguments|
+  newfunction(:ipa_string2hash, :type => :rvalue, :doc => 'This function defines the IPA replica scheme by converting a comma delimited string separated by a colon into a hash. ex. "string1,string2:string3,string4"') do |arguments|
     if arguments.size != 1
       raise(Puppet::ParseError, "suffix(): Wrong number of arguments " + "given (#{arguments.size} for 1)")
     else
@@ -8,8 +8,9 @@ module Puppet::Parser::Functions
         unless packed.is_a?(String)
           raise(Puppet::ParseError, 'ipa_string2hash(): Requires string to work with')
         end
-      grouped = packed.split(":").group_by { |s| s.split(",")[1] }
-      hashed = Hash[grouped.map { |d, str| [d, str.map { |s| s.split(",")[0] }] }]
+      pairs = packed.split(':').map { |pair| pair.split(',') }
+      hashed = {}
+      pairs.each { |from, to| hashed["#{from}-#{to}"] = {'to' => to,'from' => from} }
     end
   return hashed
   end
