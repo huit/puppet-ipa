@@ -23,49 +23,49 @@ define ipa::serverinstall (
   ipa::puppetrunin1min { "serverinstall":
   }
 
-  if $::ipaadminhomedir and is_numeric($::ipaadminuidnumber) {
-    k5login { "${::ipaadminhomedir}/.k5login":
+  if $::ipa_adminhomedir and is_numeric($::ipa_adminuidnumber) {
+    k5login { "${::ipa_adminhomedir}/.k5login":
       principals => $ipa::master::principals,
-      notify     => File["${::ipaadminhomedir}/.k5login"],
-      require    => File["${::ipaadminhomedir}"]
+      notify     => File["${::ipa_adminhomedir}/.k5login"],
+      require    => File["${::ipa_adminhomedir}"]
     }
 
     exec { "admin_keytab":
-      command => "/bin/rm -f ${::ipaadminhomedir}/admin.keytab ; /usr/sbin/kadmin.local -q 'ktadd -norandkey -k admin.keytab admin' ; /usr/bin/k5start -f ${::ipaadminhomedir}/admin.keytab -U -o admin -k /tmp/krb5cc_${::ipaadminuidnumber} > /dev/null 2>&1",
-      cwd     => "${::ipaadminhomedir}",
-      unless  => "/usr/bin/kvno -c /tmp/krb5cc_${::ipaadminuidnumber} -k ${::ipaadminhomedir}/admin.keytab admin@${realm}",
-      notify  => File["${::ipaadminhomedir}/admin.keytab"],
+      command => "/bin/rm -f ${::ipa_adminhomedir}/admin.keytab ; /usr/sbin/kadmin.local -q 'ktadd -norandkey -k admin.keytab admin' ; /usr/bin/k5start -f ${::ipa_adminhomedir}/admin.keytab -U -o admin -k /tmp/krb5cc_${::ipa_adminuidnumber} > /dev/null 2>&1",
+      cwd     => "${::ipa_adminhomedir}",
+      unless  => "/usr/bin/kvno -c /tmp/krb5cc_${::ipa_adminuidnumber} -k ${::ipa_adminhomedir}/admin.keytab admin@${realm}",
+      notify  => File["${::ipa_adminhomedir}/admin.keytab"],
       require => Cron["k5start_admin"]
     }
 
     cron { "k5start_admin":
-      command => "/usr/bin/k5start -f ${::ipaadminhomedir}/admin.keytab -U -o admin -k /tmp/krb5cc_${::ipaadminuidnumber} > /dev/null 2>&1",
+      command => "/usr/bin/k5start -f ${::ipa_adminhomedir}/admin.keytab -U -o admin -k /tmp/krb5cc_${::ipa_adminuidnumber} > /dev/null 2>&1",
       user    => 'root',
       minute  => "*/1",
-      require => [Package["kstart"], K5login["${::ipaadminhomedir}/.k5login"], File["$::ipaadminhomedir"]]
+      require => [Package["kstart"], K5login["${::ipa_adminhomedir}/.k5login"], File["$::ipa_adminhomedir"]]
     }
 
-    file { "$::ipaadminhomedir":
+    file { "$::ipa_adminhomedir":
       ensure  => directory,
       mode    => '700',
-      owner   => $::ipaadminuidnumber,
-      group   => $::ipaadminuidnumber,
+      owner   => $::ipa_adminuidnumber,
+      group   => $::ipa_adminuidnumber,
       recurse => true,
       notify  => Exec["admin_keytab"],
       require => Exec["serverinstall-${host}"]
     }
 
-    file { "${::ipaadminhomedir}/.k5login":
-      owner   => $::ipaadminuidnumber,
-      group   => $::ipaadminuidnumber,
-      require => File[$::ipaadminhomedir]
+    file { "${::ipa_adminhomedir}/.k5login":
+      owner   => $::ipa_adminuidnumber,
+      group   => $::ipa_adminuidnumber,
+      require => File[$::ipa_adminhomedir]
     }
 
-    file { "${::ipaadminhomedir}/admin.keytab":
-      owner   => $::ipaadminuidnumber,
-      group   => $::ipaadminuidnumber,
+    file { "${::ipa_adminhomedir}/admin.keytab":
+      owner   => $::ipa_adminuidnumber,
+      group   => $::ipa_adminuidnumber,
       mode    => '600',
-      require => File[$::ipaadminhomedir]
+      require => File[$::ipa_adminhomedir]
     }
   }
 }

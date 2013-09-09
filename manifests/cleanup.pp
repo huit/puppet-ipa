@@ -14,7 +14,7 @@ define ipa::cleanup (
 
   exec { "cleanup-${name}":
     command   => "/bin/bash -c \"if [ -x /usr/sbin/ipactl ]; then /usr/sbin/ipactl stop ; fi ;\
-                 if [ -n \"${::ipaadminhomedir}\" ] && [ -d ${::ipaadminhomedir} ]; then /bin/rm -rf ${::ipaadminhomedir} ; fi ;\
+                 if [ -n \"${::ipa_adminhomedir}\" ] && [ -d ${::ipa_adminhomedir} ]; then /bin/rm -rf ${::ipa_adminhomedir} ; fi ;\
                  if [ -x /usr/sbin/ipa-client-install ]; then /bin/echo | /usr/sbin/ipa-client-install --uninstall --unattended ; fi ;\
                  if [ -x /usr/sbin/ipa-server-install ]; then /usr/sbin/ipa-server-install --uninstall --unattended ; fi ;\
                  if [ -d /var/lib/pki-ca ]; then /usr/bin/pkiremove -pki_instance_root=/var/lib -pki_instance_name=pki-ca -force ; fi ;\
@@ -37,7 +37,7 @@ define ipa::cleanup (
 
   cron { "k5start_admin":
     ensure  => "absent",
-    command => "/usr/bin/k5start -f ${::ipaadminhomedir}/admin.keytab -U -o admin -k /tmp/krb5cc_${::ipaadminuidnumber} > /dev/null 2>&1",
+    command => "/usr/bin/k5start -f ${::ipa_adminhomedir}/admin.keytab -U -o admin -k /tmp/krb5cc_${::ipa_adminuidnumber} > /dev/null 2>&1",
     user    => 'root',
     minute  => "*/1"
   }<- notify { "Running IPA install cleanup, please wait.": }
