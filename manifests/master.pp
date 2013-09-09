@@ -153,8 +153,7 @@ class ipa::master (
     }
   }
 
-  #$replicas = replicas2array([$::ipareplicaarray])
+  $replicas = ipa_string2hash($::ipa_replicascheme)
 
-  #ipa::replicaagreement { "$replicas":
-  #}
+  create_resources('ipa::replicaagreement',$replicas)
 }
