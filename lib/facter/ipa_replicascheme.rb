@@ -1,4 +1,4 @@
-Facter.add(:ipareplicaarray) do
+Facter.add(:ipa_replicascheme) do
  setcode do
    host = Facter.value(:hostname)
    domain = Facter.value(:domain)
