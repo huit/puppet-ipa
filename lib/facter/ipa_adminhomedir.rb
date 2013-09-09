@@ -1,8 +1,8 @@
-Facter.add(:ipaadminuidnumber) do
+Facter.add(:ipa_adminhomedir) do
   setcode do
     require 'etc'
     begin
-      Etc.getpwnam('admin').uid
+      Etc.getpwnam('admin').dir
     rescue ArgumentError => ae
       ''
     end
