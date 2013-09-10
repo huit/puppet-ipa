@@ -155,5 +155,5 @@ class ipa::master (
 
   $replicas = ipa_string2hash($::ipa_replicascheme)
 
-  create_resources('ipa::replicaagreement',$ipa::master::replicas) <- Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>>
+  create_resources('ipa::replicaagreement',$ipa::master::replicas)
 }
