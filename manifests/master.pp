@@ -27,7 +27,7 @@ class ipa::master (
   $sssd        = {}
 ) {
 
-  Ipa::Serverinstall[$::fqdn] -> Service['ipa'] -> Ipa::Hostadd <<| |>> -> Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>> -> Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>> #-> Ipa::Replicaagreement["master-${::fqdn}"]
+  Ipa::Serverinstall[$::fqdn] -> Service['ipa'] -> Ipa::Hostadd <<| |>> -> Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>> -> Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>> -> Ipa::Replicaagreement["$ipa::master::replicas"]
 
   Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>>
   Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>>
@@ -155,5 +155,5 @@ class ipa::master (
 
   $replicas = ipa_string2hash($::ipa_replicascheme)
 
-  create_resources('ipa::replicaagreement',$replicas)
+  create_resources('ipa::replicaagreement',$ipa::master::replicas)
 }
