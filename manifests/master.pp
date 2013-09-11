@@ -34,7 +34,8 @@ class ipa::master (
   Ipa::Hostadd <<| |>>
 
   file { '/etc/ipa/primary':
-    ensure => present
+    ensure  => present,
+    content => 'Added by HUIT IPA Puppet module - do not remove'
   }
 
   if $ipa::master::sudo {
