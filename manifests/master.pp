@@ -35,7 +35,7 @@ class ipa::master (
 
   file { '/etc/ipa/primary':
     ensure  => present,
-    content => 'Added by HUIT IPA Puppet module - do not remove'
+    content => 'Added by HUIT IPA Puppet module: designates primary master - do not remove.'
   }
 
   if $ipa::master::sudo {
