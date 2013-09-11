@@ -27,7 +27,7 @@ class ipa::master (
   $sssd        = {}
 ) {
 
-  Ipa::Serverinstall[$::fqdn] -> Service['ipa'] -> File['/etc/ipa/primary'] -> Ipa::Hostadd <<| |>> -> Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>> -> Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>>
+  Ipa::Serverinstall[$::fqdn] -> Service['ipa'] -> File['/etc/ipa/primary'] -> Ipa::Hostadd <<| |>> -> Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>> -> Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>> -> Ipa::Createreplicas[$::fqdn]
 
   Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>>
   Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>>
@@ -90,6 +90,9 @@ class ipa::master (
     dspw    => $ipa::master::dspw,
     dnsopt  => $ipa::master::dnsopt,
     require => Package[$ipa::master::svrpkg]
+  }
+
+  ipa::createreplicas { "$::fqdn":
   }
 
   firewall { "101 allow IPA master TCP services (http,https,kerberos,kpasswd,ldap,ldaps)":
@@ -157,8 +160,4 @@ class ipa::master (
       require    => Ipa::Serverinstall[$::fqdn]
     }
   }
-
-  $replicas = ipa_string2hash($::ipa_replicascheme)
-
-  create_resources('ipa::replicaagreement',$ipa::master::replicas)
 }
