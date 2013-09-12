@@ -27,11 +27,16 @@ class ipa::master (
   $sssd        = {}
 ) {
 
-  Ipa::Serverinstall[$::fqdn] -> Service['ipa'] -> Ipa::Hostadd <<| |>> -> Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>> -> Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>> #-> Ipa::Replicaagreement["master-${::fqdn}"]
+  Ipa::Serverinstall[$::fqdn] -> Service['ipa'] -> File['/etc/ipa/primary'] -> Ipa::Hostadd <<| |>> -> Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>> -> Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>> -> Ipa::Createreplicas[$::fqdn]
 
   Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>>
   Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>>
   Ipa::Hostadd <<| |>>
+
+  file { '/etc/ipa/primary':
+    ensure  => present,
+    content => 'Added by HUIT IPA Puppet module: designates primary master - do not remove.'
+  }
 
   if $ipa::master::sudo {
     Ipa::Configsudo <<| |>> {
@@ -85,6 +90,9 @@ class ipa::master (
     dspw    => $ipa::master::dspw,
     dnsopt  => $ipa::master::dnsopt,
     require => Package[$ipa::master::svrpkg]
+  }
+
+  ipa::createreplicas { "$::fqdn":
   }
 
   firewall { "101 allow IPA master TCP services (http,https,kerberos,kpasswd,ldap,ldaps)":
@@ -152,8 +160,4 @@ class ipa::master (
       require    => Ipa::Serverinstall[$::fqdn]
     }
   }
-
-  $replicas = ipa_string2hash($::ipa_replicascheme)
-
-  create_resources('ipa::replicaagreement',$replicas)
 }
