@@ -1,4 +1,4 @@
-Facter.add(:ipa_replicascheme) do
+Facter.add(:ipa_replicascheme, :timeout => 10) do
  setcode do
    host = Facter.value(:hostname)
    domain = Facter.value(:domain)
