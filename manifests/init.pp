@@ -157,14 +157,14 @@ class ipa (
       validate_re("$ipa::adminpw",'^.........*$',"Parameter 'adminpw' must be at least 8 characters long")
       validate_re("$ipa::dspw",'^.........*$',"Parameter 'dspw' must be at least 8 characters long")
     }
-  }
 
-  if ! is_domain_name($ipa::domain) {
-    fail("Parameter 'domain' is not a valid domain name")
-  }
+    if ! is_domain_name($ipa::domain) {
+      fail("Parameter 'domain' is not a valid domain name")
+    }
 
-  if ! is_domain_name($ipa::realm) {
-    fail("Parameter 'realm' is not a valid domain name")
+    if ! is_domain_name($ipa::realm) {
+      fail("Parameter 'realm' is not a valid domain name")
+    }
   }
 
   if $ipa::cleanup {
