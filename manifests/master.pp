@@ -129,8 +129,8 @@ class ipa::master (
     domain     => $ipa::master::domain,
     realm      => $ipa::master::realm,
     adminpw    => $ipa::master::adminpw,
-    otp        => '', 
-    mkhomedir  => '', 
+    otp        => '',
+    mkhomedir  => '',
     ntp        => ''
   }
 

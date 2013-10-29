@@ -150,7 +150,7 @@ class ipa (
 
   if $ipa::master and $ipa::replica {
     fail("Conflicting options selected. Cannot configure both master and replica at once.")
-  } 
+  }
 
   if ! $ipa::cleanup {
     if $ipa::master or $ipa::replica {
@@ -226,7 +226,7 @@ class ipa (
       kstart      => $ipa::kstart,
       sssd        => $ipa::sssd
     }
-    
+
     class { "ipa::client":
       clntpkg      => $ipa::clntpkg,
       ldaputils    => $ipa::ldaputils,
