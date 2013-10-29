@@ -3,7 +3,7 @@ bundler_args: ''
 notifications:
   email:
     - tfhartmann@gmail.com
-    - robert_ruma@harvard.edu
+    - robruma@gmail.com
 env:
   - PUPPET_VERSION=3.3.1 
   - PUPPET_VERSION=3.2.3 
