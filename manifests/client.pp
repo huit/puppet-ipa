@@ -110,7 +110,7 @@ class ipa::client (
       }
       realize Package['sudo-ldap']
     }
-    
+
     if $ipa::client::mkhomedir == true {
       augeas {
         'mkhomedir_pam' :

@@ -9,7 +9,7 @@ define ipa::hostadd (
 ) {
 
   $timestamp = strftime("%a %b %d %Y %r")
-  $descinfo = rstrip(join(['Added by HUIT IPA Puppet module on',$timestamp,$desc], " ")) 
+  $descinfo = rstrip(join(['Added by HUIT IPA Puppet module on',$timestamp,$desc], " "))
 
   exec { "hostadd-${host}":
     command   => "/sbin/runuser -l admin -c \'/usr/bin/ipa host-add ${host} --locality=\"${locality}\" --location=\"${location}\" --desc=\"${descinfo}\" --platform=\"${clientpf}\" --os=\"${clientos}\" --password=${otp}\'",
