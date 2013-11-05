@@ -205,7 +205,8 @@ class ipa (
       automount   => $ipa::automount,
       autofs      => $ipa::autofs,
       kstart      => $ipa::kstart,
-      sssd        => $ipa::sssd
+      sssd        => $ipa::sssd,
+      ntp         => $ipa::ntp
     }
 
     if ! $ipa::adminpw {
