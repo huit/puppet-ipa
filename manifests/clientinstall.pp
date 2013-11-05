@@ -12,7 +12,7 @@ define ipa::clientinstall (
   Exec["client-install-${host}"] ~> Ipa::Flushcache["client-${host}"]
 
   Exec["client-install-${host}"] ~> Service['sssd']
-  
+
   $mkhomediropt = $mkhomedir ? {
     true    => '--mkhomedir',
     default => ''
