@@ -24,7 +24,8 @@ class ipa::master (
   $automount   = {},
   $autofs      = {},
   $kstart      = {},
-  $sssd        = {}
+  $sssd        = {},
+  $ntp         = {},
 ) {
 
   Ipa::Serverinstall[$::fqdn] -> Service['ipa'] -> File['/etc/ipa/primary'] -> Ipa::Hostadd <<| |>> -> Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>> -> Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>> -> Ipa::Createreplicas[$::fqdn]
@@ -83,12 +84,18 @@ class ipa::master (
     default => ''
   }
 
+  $ntpopt = $ipa::master::ntp ? {
+    false   => '--no-ntp',
+    default => ''
+  }
+
   ipa::serverinstall { "$::fqdn":
     realm   => $ipa::master::realm,
     domain  => $ipa::master::domain,
     adminpw => $ipa::master::adminpw,
     dspw    => $ipa::master::dspw,
     dnsopt  => $ipa::master::dnsopt,
+    ntpopt  => $ipa::master::ntpopt,
     require => Package[$ipa::master::svrpkg]
   }
 

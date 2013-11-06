@@ -4,11 +4,12 @@ define ipa::serverinstall (
   $domain  = {},
   $adminpw = {},
   $dspw    = {},
-  $dnsopt  = {}
+  $dnsopt  = {},
+  $ntpopt  = {}
 ) {
 
   exec { "serverinstall-${host}":
-    command   => "/usr/sbin/ipa-server-install --hostname=${host} --realm=${realm} --domain=${domain} --admin-password=${adminpw} --ds-password=${dspw} ${dnsopt} --unattended",
+    command   => "/usr/sbin/ipa-server-install --hostname=${host} --realm=${realm} --domain=${domain} --admin-password=${adminpw} --ds-password=${dspw} ${dnsopt} ${ntpopt} --unattended",
     timeout   => '0',
     unless    => "/usr/sbin/ipactl status >/dev/null 2>&1",
     creates   => "/etc/ipa/default.conf",

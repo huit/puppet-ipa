@@ -157,14 +157,22 @@ class ipa (
       validate_re("$ipa::adminpw",'^.........*$',"Parameter 'adminpw' must be at least 8 characters long")
       validate_re("$ipa::dspw",'^.........*$',"Parameter 'dspw' must be at least 8 characters long")
     }
-  }
 
-  if ! is_domain_name($ipa::domain) {
-    fail("Parameter 'domain' is not a valid domain name")
-  }
+    if ! $ipa::domain {
+      fail("Required parameter 'domain' missing")
+    }
 
-  if ! is_domain_name($ipa::realm) {
-    fail("Parameter 'realm' is not a valid domain name")
+    if ! $ipa::realm {
+      fail("Required parameter 'realm' missing")
+    }
+
+    if ! is_domain_name($ipa::domain) {
+      fail("Parameter 'domain' is not a valid domain name")
+    }
+
+    if ! is_domain_name($ipa::realm) {
+      fail("Parameter 'realm' is not a valid domain name")
+    }
   }
 
   if $ipa::cleanup {
@@ -197,15 +205,8 @@ class ipa (
       automount   => $ipa::automount,
       autofs      => $ipa::autofs,
       kstart      => $ipa::kstart,
-      sssd        => $ipa::sssd
-    }
-
-    if ! $ipa::domain {
-      fail("Required parameter 'domain' missing")
-    }
-
-    if ! $ipa::realm {
-      fail("Required parameter 'realm' missing")
+      sssd        => $ipa::sssd,
+      ntp         => $ipa::ntp
     }
 
     if ! $ipa::adminpw {
@@ -249,14 +250,6 @@ class ipa (
       location     => $ipa::location
     }
 
-    if ! $ipa::domain {
-      fail("Required parameter 'domain' missing")
-    }
-
-    if ! $ipa::realm {
-      fail("Required parameter 'realm' missing")
-    }
-
     if ! $ipa::adminpw {
       fail("Required parameter 'adminpw' missing")
     }
@@ -292,14 +285,6 @@ class ipa (
       desc          => $ipa::desc,
       locality      => $ipa::locality,
       location      => $ipa::location
-    }
-
-    if ! $ipa::domain {
-      fail("Required parameter 'domain' missing")
-    }
-
-    if ! $ipa::realm {
-      fail("Required parameter 'realm' missing")
     }
 
     if ! $ipa::otp {

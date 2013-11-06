@@ -13,7 +13,8 @@ define ipa::cleanup (
   Cron["k5start_admin"] -> Cron["k5start_root"] -> Exec["cleanup-${name}"]
 
   exec { "cleanup-${name}":
-    command   => "/bin/bash -c \"if [ -x /usr/sbin/ipactl ]; then /usr/sbin/ipactl stop ; fi ;\
+    command   => "/bin/bash -c \"
+                 if [ -x /usr/sbin/ipactl ]; then /usr/sbin/ipactl stop ; fi ;\
                  if [ -n \"${::ipa_adminhomedir}\" ] && [ -d ${::ipa_adminhomedir} ]; then /bin/rm -rf ${::ipa_adminhomedir} ; fi ;\
                  if [ -x /usr/sbin/ipa-client-install ]; then /bin/echo | /usr/sbin/ipa-client-install --uninstall --unattended ; fi ;\
                  if [ -x /usr/sbin/ipa-server-install ]; then /usr/sbin/ipa-server-install --uninstall --unattended ; fi ;\
@@ -22,10 +23,11 @@ define ipa::cleanup (
                  if [ -e /etc/openldap/ldap.conf.ipabkp ]; then /bin/cp -f /etc/openldap/ldap.conf.ipabkp /etc/openldap/ldap.conf ; fi ;\
                  if [ -e /etc/krb5.conf.ipabkp ]; then /bin/cp -f /etc/krb5.conf.ipabkp /etc/krb5.conf ; fi ;\
                  if [ -e /etc/krb5.keytab ]; then /bin/mv -f /etc/krb5.keytab /etc/krb5.keytab.puppet-ipa.cleanup ; fi ;\
-                 if [ -d /var/lib/certmonger ]; then find /var/lib/certmonger -type f -exec /bin/rm -f '{}' \; ; fi ;\
-                 if [ -d /var/lib/ipa ]; then /usr/bin/find /var/lib/ipa -type f -exec /bin/rm -f '{}' \; ; fi ;\
-                 if [ -d /var/lib/ipa-client ]; then /usr/bin/find /var/lib/ipa-client -type f -exec /bin/rm -f '{}' \; ; fi ;\
-                 if [ -d /etc/ipa ]; then /usr/bin/find /etc/ipa -type f -exec /bin/rm -f '{}' \; ; fi\"",
+                 if [ -d /var/lib/certmonger ]; then find /var/lib/certmonger -type f -exec /bin/rm -f '{}' \\; ; fi ;\
+                 if [ -d /var/lib/ipa ]; then /usr/bin/find /var/lib/ipa -type f -exec /bin/rm -f '{}' \\; ; fi ;\
+                 if [ -d /var/lib/ipa-client ]; then /usr/bin/find /var/lib/ipa-client -type f -exec /bin/rm -f '{}' \\; ; fi ;\
+                 if [ -d /etc/ipa ]; then /usr/bin/find /etc/ipa -type f -exec /bin/rm -f '{}' \\; ; fi ;\
+                 \"",
     timeout   => '0',
     logoutput => true
   }

@@ -109,9 +109,9 @@ Defaults to 'false'.
 
 ####`ntp`
 
-Controls the option to configure NTP on a client.
+Controls the option to configure NTP on a client or a server.
 
-Defaults to 'false'.
+Defaults to 'false' on a client, and true on a server.
 
 ####`kstart`
 
