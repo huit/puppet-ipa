@@ -88,7 +88,7 @@ class ipa::master (
     false   => '--no-ntp',
     default => ''
   }
- 
+
   ipa::serverinstall { "$::fqdn":
     realm   => $ipa::master::realm,
     domain  => $ipa::master::domain,
