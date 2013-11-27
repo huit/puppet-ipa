@@ -158,7 +158,6 @@ class ipa (
       validate_re("$ipa::dspw",'^.........*$',"Parameter 'dspw' must be at least 8 characters long")
     }
 
-<<<<<<< HEAD
     if ! $ipa::domain {
       fail("Required parameter 'domain' missing")
     }
@@ -171,12 +170,6 @@ class ipa (
       fail("Parameter 'domain' is not a valid domain name")
     }
 
-=======
-    if ! is_domain_name($ipa::domain) {
-      fail("Parameter 'domain' is not a valid domain name")
-    }
-
->>>>>>> e7b8593... Only check for valid realm and domain if not doing a cleanup
     if ! is_domain_name($ipa::realm) {
       fail("Parameter 'realm' is not a valid domain name")
     }
