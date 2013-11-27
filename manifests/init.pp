@@ -112,7 +112,7 @@ class ipa (
     require => Package[$ipa::svrpkg]
   }
 
-  if $ipa::sssd and ! $ipa::cleanup {
+  if $ipa::sssd {
     @service { "sssd":
       ensure => 'running',
       enable => true
