@@ -61,7 +61,7 @@ class ipa (
   $dspw          = $ipa::params::dspw,
   $otp           = $ipa::params::otp,
   $dns           = $ipa::params::dns,
-	$forwarders		 = $ipa::params::forwarders,
+  $forwarders    = $ipa::params::forwarders,
   $mkhomedir     = $ipa::params::mkhomedir,
   $ntp           = $ipa::params::ntp,
   $kstart        = $ipa::params::kstart,
@@ -196,7 +196,7 @@ class ipa (
     class { "ipa::master":
       svrpkg      => $ipa::svrpkg,
       dns         => $ipa::dns,
-			forwarders	=> $ipa::forwarders,
+      forwarders  => $ipa::forwarders,
       domain      => $ipa::domain,
       realm       => $ipa::realm,
       adminpw     => $ipa::adminpw,
