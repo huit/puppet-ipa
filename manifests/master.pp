@@ -13,6 +13,7 @@
 class ipa::master (
   $svrpkg      = {},
   $dns         = {},
+  $forwarders  = [],
   $realm       = {},
   $domain      = {},
   $ipaservers  = [],
@@ -79,9 +80,17 @@ class ipa::master (
 
   realize Service['ipa']
 
-  $dnsopt = $ipa::master::dns ? {
-    true    => '--setup-dns',
-    default => ''
+  if $ipa::master::dns {
+    if size($ipa::master::forwarders) > 0 {
+      $forwarderopts = join(prefix($ipa::master::forwarders, '--forwarder '), ' ')
+    }
+    else {
+      $forwarderopts = '--no-forwarders'
+    }
+    $dnsopt = "--setup-dns ${forwarderopts}"
+  }
+  else {
+    $dnsopt = ''
   }
 
   $ntpopt = $ipa::master::ntp ? {

@@ -14,6 +14,7 @@
 #  $dspw = undef - Defines the IPA directory services password.
 #  $otp = undef - Defines an IPA client one-time-password.
 #  $dns = false - Controls the option to configure a DNS zone with the IPA master setup.
+#  $forwarders = [] - Defines an array of DNS forwarders to use when DNS is setup. An empty list will use the Root Nameservers.
 #  $loadbalance = false - Controls the option to include any additional hostnames to be used in a load balanced IPA client configuration.
 #  $ipaservers = [] - Defines an array of additional hostnames to be used in a load balanced IPA client configuration.
 #  $mkhomedir = false - Controls the option to create user home directories on first login.
@@ -60,6 +61,7 @@ class ipa (
   $dspw          = $ipa::params::dspw,
   $otp           = $ipa::params::otp,
   $dns           = $ipa::params::dns,
+  $forwarders    = $ipa::params::forwarders,
   $mkhomedir     = $ipa::params::mkhomedir,
   $ntp           = $ipa::params::ntp,
   $kstart        = $ipa::params::kstart,
@@ -194,6 +196,7 @@ class ipa (
     class { "ipa::master":
       svrpkg      => $ipa::svrpkg,
       dns         => $ipa::dns,
+      forwarders  => $ipa::forwarders,
       domain      => $ipa::domain,
       realm       => $ipa::realm,
       adminpw     => $ipa::adminpw,
