@@ -89,6 +89,12 @@ Controls the option to configure a DNS zone with the IPA master setup.
 
 Defaults to 'false'.
 
+####`forwarders`
+
+Defines an array of DNS forwarders to use when DNS is setup. An empty list will use the Root Nameservers.
+
+Defaults to '[]'.
+
 ####`loadbalance`
 
 Controls the option to include any additional hostnames to be used in a load balanced IPA client configuration.
