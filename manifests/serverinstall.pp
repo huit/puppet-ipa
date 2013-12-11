@@ -32,7 +32,7 @@ define ipa::serverinstall (
     }
 
     exec { "admin_keytab":
-      command => "/bin/rm -f ${::ipa_adminhomedir}/admin.keytab ; /usr/sbin/kadmin.local -q 'ktadd -norandkey -k admin.keytab admin' ; /usr/bin/k5start -f ${::ipa_adminhomedir}/admin.keytab -U -o admin -k /tmp/krb5cc_${::ipa_adminuidnumber} > /dev/null 2>&1",
+      command => "/usr/sbin/kadmin.local -q 'ktadd -norandkey -k admin.keytab admin' ; /usr/bin/k5start -f ${::ipa_adminhomedir}/admin.keytab -U -o admin -k /tmp/krb5cc_${::ipa_adminuidnumber} > /dev/null 2>&1",
       cwd     => "${::ipa_adminhomedir}",
       unless  => "/usr/bin/kvno -c /tmp/krb5cc_${::ipa_adminuidnumber} -k ${::ipa_adminhomedir}/admin.keytab admin@${realm}",
       notify  => File["${::ipa_adminhomedir}/admin.keytab"],
