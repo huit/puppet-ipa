@@ -9,7 +9,7 @@ define ipa::serverinstall (
 ) {
 
   exec { "serverinstall-${host}":
-    command   => shellquote("/usr/sbin/ipa-server-install --hostname=${host} --realm=${realm} --domain=${domain} --admin-password=${adminpw} --ds-password=${dspw} ${dnsopt} ${ntpopt} --unattended"),
+    command   => shellquote('/usr/sbin/ipa-server-install',"--hostname=${host}","--realm=${realm}","--domain=${domain}","--admin-password=${adminpw}","--ds-password=${dspw}","${dnsopt}","${ntpopt}",'--unattended'),
     timeout   => '0',
     unless    => "/usr/sbin/ipactl status >/dev/null 2>&1",
     creates   => "/etc/ipa/default.conf",
@@ -32,15 +32,15 @@ define ipa::serverinstall (
     }
 
     exec { "admin_keytab":
-      command => shellquote("/usr/sbin/kadmin.local -q 'ktadd -norandkey -k admin.keytab admin' ; /usr/bin/k5start -f ${::ipa_adminhomedir}/admin.keytab -U -o admin -k /tmp/krb5cc_${::ipa_adminuidnumber} > /dev/null 2>&1"),
+      command => shellquote('/usr/sbin/kadmin.local','-q','"ktadd -norandkey -k admin.keytab admin"',';','/usr/bin/k5start','-f',"${::ipa_adminhomedir}/admin.keytab",'-U','-o','admin','-k',"/tmp/krb5cc_${::ipa_adminuidnumber}",'>','/dev/null','2>&1'),
       cwd     => "${::ipa_adminhomedir}",
-      unless  => shellquote("/usr/bin/kvno -c /tmp/krb5cc_${::ipa_adminuidnumber} -k ${::ipa_adminhomedir}/admin.keytab admin@${realm}"),
+      unless  => shellquote('/usr/bin/kvno','-c',"/tmp/krb5cc_${::ipa_adminuidnumber}",'-k',"${::ipa_adminhomedir}/admin.keytab","admin@${realm}"),
       notify  => File["${::ipa_adminhomedir}/admin.keytab"],
       require => Cron["k5start_admin"]
     }
 
     cron { "k5start_admin":
-      command => shellquote("/usr/bin/k5start -f ${::ipa_adminhomedir}/admin.keytab -U -o admin -k /tmp/krb5cc_${::ipa_adminuidnumber} > /dev/null 2>&1"),
+      command => shellquote('/usr/bin/k5start','-f',"${::ipa_adminhomedir}/admin.keytab",'-U','-o','admin','-k',"/tmp/krb5cc_${::ipa_adminuidnumber}",'>','/dev/null','2>&1'),
       user    => 'root',
       minute  => "*/1",
       require => [Package["kstart"], K5login["${::ipa_adminhomedir}/.k5login"], File["$::ipa_adminhomedir"]]
