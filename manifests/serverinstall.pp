@@ -40,7 +40,7 @@ define ipa::serverinstall (
     }
 
     cron { "k5start_admin":
-      command => shellquote('/usr/bin/k5start','-f',"${::ipa_adminhomedir}/admin.keytab",'-U','-o','admin','-k',"/tmp/krb5cc_${::ipa_adminuidnumber}",'>','/dev/null','2>&1'),
+      command => shellquote("/usr/bin/k5start -f ${::ipa_adminhomedir}/admin.keytab -U -o admin -k /tmp/krb5cc_${::ipa_adminuidnumber} > /dev/null 2>&1"),
       user    => 'root',
       minute  => "*/1",
       require => [Package["kstart"], K5login["${::ipa_adminhomedir}/.k5login"], File["$::ipa_adminhomedir"]]
