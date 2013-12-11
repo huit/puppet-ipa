@@ -144,7 +144,7 @@ class ipa (
   }
 
   @cron { "k5start_root":
-    command => "/usr/bin/k5start -f /etc/krb5.keytab -U -o root -k /tmp/krb5cc_0 > /dev/null 2>&1",
+    command => '/usr/bin/k5start -f /etc/krb5.keytab -U -o root -k /tmp/krb5cc_0 > /dev/null 2>&1',
     user    => 'root',
     minute  => "*/1",
     require => Package["kstart"]
