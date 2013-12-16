@@ -7,7 +7,7 @@ define ipa::loadbalanceconf (
 
   $dc = prefix([regsubst($domain,'(\.)',',dc=','G')],'dc=')
 
-  $servers = chop(inline_template('<% @ipaservers.each do |@ipaserver| -%><%= @ipaserver %>,<% end -%>'))
+  $servers = chop(inline_template('<% @ipaservers.each do |ipaserver| -%><%= ipaserver %>,<% end -%>'))
 
   case $::osfamily {
     'Debian': {
