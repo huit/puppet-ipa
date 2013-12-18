@@ -67,7 +67,6 @@ class ipa::replica (
   }
 
   @@ipa::replicaprepare { "$::fqdn":
-    dspw => $ipa::replica::dspw,
     tag  => "ipa-replica-prepare-${ipa::replica::domain}"
   }
 }
