@@ -18,11 +18,11 @@ define ipa::serverinstall (
   }<- notify { "Running IPA server install, please wait.": }
 
   ipa::flushcache { "server-${host}":
-    notify => Ipa::Puppetrunin1min["serverinstall"],
+    #notify => Ipa::Puppetrunin1min["serverinstall"],
   }
 
-  ipa::puppetrunin1min { "serverinstall":
-  }
+  #ipa::puppetrunin1min { "serverinstall":
+  #}
 
   if $::ipa_adminhomedir and is_numeric($::ipa_adminuidnumber) {
     k5login { "${::ipa_adminhomedir}/.k5login":
