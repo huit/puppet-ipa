@@ -18,10 +18,10 @@ define ipa::serverinstall (
   }<- notify { "Running IPA server install, please wait.": }
 
   ipa::flushcache { "server-${host}":
-    notify => Ipa::Adminconfig["serverinstall-${host}"],
+    notify => Ipa::Adminconfig[$host],
   }
 
-  ipa::adminconfig { "${host}":
+  ipa::adminconfig { $host:
     realm => $realm
   }
 }
