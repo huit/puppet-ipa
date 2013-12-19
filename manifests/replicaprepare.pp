@@ -9,9 +9,12 @@ define ipa::replicaprepare (
 
   realize Cron["k5start_root"]
 
+  $replicapreparecmd = shellquote('/usr/sbin/ipa-replica-prepare',"--password=${dspw}")
+  $replicamanagecmd = shellquote('/usr/sbin/ipa-replica-manage',"--password=${dspw}")
+
   exec { "replicaprepare-${host}":
-    command => shellquote('/usr/sbin/ipa-replica-prepare',"--password=${dspw}","${host}"),
-    unless  => shellquote('/usr/sbin/ipa-replica-manage',"--password=${dspw}",'list','|','/bin/grep',"${host} >/dev/null 2>&1"),
+    command => "$replicapreparecmd ${host}",
+    unless  => "$replicamanagecmd list | /bin/grep ${host} >/dev/null 2>&1",
     timeout => '0'
   }
 
