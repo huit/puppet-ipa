@@ -1,5 +1,6 @@
 define ipa::replicaprepare (
-  $host = $name
+  $host = $name,
+  $dspw = {}
 ) {
 
   Cron["k5start_root"] -> Exec["replicaprepare-${host}"] ~> Exec["replica-info-scp-${host}"] ~> Ipa::Hostdelete[$host]
@@ -9,8 +10,8 @@ define ipa::replicaprepare (
   realize Cron["k5start_root"]
 
   exec { "replicaprepare-${host}":
-    command => shellquote('/sbin/runuser','-l','admin','-c',"/usr/sbin/ipa-replica-prepare ${host}"),
-    unless  => shellquote('/sbin/runuser','-l','admin','-c',"/usr/sbin/ipa-replica-manage list | /bin/grep ${host} >/dev/null 2>&1"),
+    command => shellquote("/usr/sbin/ipa-replica-prepare --password=${dspw} ${host}"),
+    unless  => shellquote("/usr/sbin/ipa-replica-manage --password=${dspw} list | /bin/grep ${host} >/dev/null 2>&1"),
     timeout => '0'
   }
 
