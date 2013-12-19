@@ -33,10 +33,7 @@ class ipa::master (
 
   Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>>
   Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>>
-
-  if $::ipa_adminhomedir and is_numeric($::ipa_adminuidnumber) {
-    Ipa::Hostadd <<| |>>
-  }
+  Ipa::Hostadd <<| |>>
 
   file { '/etc/ipa/primary':
     ensure  => present,
