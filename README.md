@@ -10,9 +10,15 @@ huit/puppet-ipa aims at the management and configuration of a complete IPA envir
 To start, an IPA master will be required as the beginning of the LDAP/Kerberos environment. IPA replicas can
 then be added for additional resiliancy.
 
-IPA replica servers will automatically be configured with a replication agreement on the IPA master server.
+The IPA primary master server will take a minimum of two Puppet runs to fully configure. This is because the ipa_adminhomedir,
+ipa_adminuidnumber and ipa_replicascheme facts are not available until the IPA primary master is installed and operational.
+These facts are necessary to automatically configure clients and replicas.
 
-All nodes added as clients will automatically be added to the IPA domain.
+IPA replica servers will be automatically configured with a replication agreement on the IPA primary master server.
+
+All Puppet nodes added as clients will automatically be added to the IPA domain through exported resources.
+
+Multiple IPA domains are supported.
 
 A cleanup parameter has been included to remove the IPA server or client packages from nodes.
 
@@ -151,13 +157,13 @@ Defaults to 'true'.
 
 ####`sssdtoolspkg`
 
-SSSD tools package.
+SSSD tools package name.
 
 Defaults to 'sssd-tools'
 
 ####`sssd`
 
-Controls the option to start the SSSD service.
+Controls the option to start the SSSD service if its not defined elsewhere. Note: Set to false if the SSSD service is defined in your site specific modules.
 
 Defaults to 'true'.
 
@@ -193,13 +199,13 @@ Defaults to 'false'.
 
 ####`svrpkg`
 
-IPA server package.
+IPA server package name.
 
 Defaults to 'ipa-server'.
 
 ####`clntpkg`
 
-IPA client package.
+IPA client package name.
 
 Defaults to 'ipa-client'.
 
@@ -211,7 +217,7 @@ Defaults to 'true'.
 
 ####`ldaputilspkg`
 
-LDAP utilities package.
+LDAP utilities package name.
 
 Defaults to 'openldap-clients'.
 
