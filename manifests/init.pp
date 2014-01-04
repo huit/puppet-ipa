@@ -121,10 +121,14 @@ class ipa (
     }
   }
 
-  if $ipa::mkhomedir and $::osfamily == 'RedHat' and $::lsbmajdistrelease == '6' {
-    service { "oddjobd":
-      ensure => 'running',
-      enable => true
+  case $::osfamily {
+    'RedHat': {
+      if $ipa::mkhomedir {
+        service { "oddjobd":
+          ensure => 'running',
+          enable => true
+        }
+      }
     }
   }
 
