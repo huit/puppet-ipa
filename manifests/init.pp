@@ -121,8 +121,8 @@ class ipa (
     }
   }
 
-  case $::osfamily {
-    'RedHat': {
+  case "${::osfamily}${::lsbmajdistrelease}" {
+    'RedHat6': {
       if $ipa::mkhomedir {
         service { "oddjobd":
           ensure => 'running',
