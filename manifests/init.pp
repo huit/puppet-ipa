@@ -121,12 +121,16 @@ class ipa (
     }
   }
 
-  case "${::osfamily}${::lsbmajdistrelease}" {
-    'RedHat6': {
-      if $ipa::mkhomedir {
-        service { "oddjobd":
-          ensure => 'running',
-          enable => true
+  case $::osfamily {
+    'RedHat': {
+      case $::lsbmajdistrelease {
+        '6': {
+          if $ipa::mkhomedir {
+            service { "oddjobd":
+              ensure => 'running',
+              enable => true
+            }
+          }
         }
       }
     }
