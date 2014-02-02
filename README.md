@@ -95,6 +95,12 @@ Controls the option to configure a DNS zone with the IPA master setup.
 
 Defaults to 'false'.
 
+###`fixedprimary`
+
+Configure sssd to use a fixed server as the primary IPA server.
+
+Defaults to 'false'.
+
 ####`forwarders`
 
 Defines an array of DNS forwarders to use when DNS is setup. An empty list will use the Root Nameservers.
