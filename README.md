@@ -95,7 +95,7 @@ Controls the option to configure a DNS zone with the IPA master setup.
 
 Defaults to 'false'.
 
-###`fixedprimary`
+####`fixedprimary`
 
 Configure sssd to use a fixed server as the primary IPA server.
 
