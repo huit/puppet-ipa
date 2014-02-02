@@ -2,14 +2,15 @@
 #
 # Installs an IPA client
 define ipa::clientinstall (
-  $host       = $name,
-  $masterfqdn = {},
-  $domain     = {},
-  $realm      = {},
-  $adminpw    = {},
-  $otp        = {},
-  $mkhomedir  = {},
-  $ntp        = {}
+  $host         = $name,
+  $masterfqdn   = {},
+  $domain       = {},
+  $realm        = {},
+  $adminpw      = {},
+  $otp          = {},
+  $mkhomedir    = {},
+  $ntp          = {},
+  $fixedprimary = false
 ) {
 
   Exec["client-install-${host}"] ~> Ipa::Flushcache["client-${host}"]
@@ -24,7 +25,12 @@ define ipa::clientinstall (
     default => '--no-ntp'
   }
 
-  $clientinstallcmd = shellquote('/usr/sbin/ipa-client-install',"--server=${masterfqdn}","--hostname=${host}","--domain=${domain}","--realm=${realm}","--password=${otp}",$mkhomediropt,$ntpopt,'--unattended')
+  $fixedprimaryopt = $fixedprimary ? {
+    true    => '--fixed-primary',
+    default => ''
+  }
+
+  $clientinstallcmd = shellquote('/usr/sbin/ipa-client-install',"--server=${masterfqdn}","--hostname=${host}","--domain=${domain}","--realm=${realm}","--password=${otp}",$mkhomediropt,$ntpopt,$fixedprimaryopt,'--unattended')
   $dc = prefix([regsubst($domain,'(\.)',',dc=','G')],'dc=')
 
   exec { "client-install-${host}":

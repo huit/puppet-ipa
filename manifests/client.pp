@@ -29,18 +29,20 @@ class ipa::client (
   $loadbalance   = {},
   $mkhomedir     = false,
   $ntp           = false,
+  $fixedprimary  = false,
   $desc          = {},
   $locality      = {},
   $location      = {}
 ) {
 
   Ipa::Clientinstall <<| |>> {
-    name      => $::fqdn,
-    otp       => $ipa::client::otp,
-    domain    => $ipa::client::domain,
-    mkhomedir => $ipa::client::mkhomedir,
-    ntp       => $ipa::client::ntp,
-    require   => Package[$ipa::client::clntpkg]
+    name         => $::fqdn,
+    otp          => $ipa::client::otp,
+    domain       => $ipa::client::domain,
+    mkhomedir    => $ipa::client::mkhomedir,
+    ntp          => $ipa::client::ntp,
+    fixedprimary => $ipa::client::fixedprimary,
+    require      => Package[$ipa::client::clntpkg]
   }
 
   if $ipa::client::sudo {
@@ -53,56 +55,56 @@ class ipa::client (
 
   if $ipa::client::automount {
     if $ipa::client::autofs {
-      realize Service["autofs"]
-      realize Package["autofs"]
+      realize Service['autofs']
+      realize Package['autofs']
     }
 
     Ipa::Configautomount <<| |>> {
       name    => $::fqdn,
       os      => $::osfamily,
-      notify  => Service["autofs"],
+      notify  => Service['autofs'],
       require => Ipa::Clientinstall[$::fqdn]
     }
   }
 
   if defined(Package[$ipa::client::clntpkg]) {
-    realize Package["$ipa::client::clntpkg"]
+    realize Package[$ipa::client::clntpkg]
   }
 
   if $ipa::client::ldaputils {
     if defined(Package[$ipa::client::ldaputilspkg]) {
-      realize Package["$ipa::client::ldaputilspkg"]
+      realize Package[$ipa::client::ldaputilspkg]
     }
   }
 
   if $ipa::client::sssdtools {
     if defined(Package[$ipa::client::sssdtoolspkg]) {
-      realize Package["$ipa::client::sssdtoolspkg"]
+      realize Package[$ipa::client::sssdtoolspkg]
     }
   }
 
   if $ipa::client::sssd {
-    realize Service["sssd"]
+    realize Service['sssd']
   }
 
   if $::osfamily == 'Debian' {
-    file { "/etc/pki":
-      ensure  => directory,
-      mode    => 755,
-      owner   => root,
-      group   => root,
+    file { '/etc/pki':
+      ensure  => 'directory',
+      mode    => '0755',
+      owner   => 'root',
+      group   => 'root',
       require => Package[$ipa::client::clntpkg]
     }
 
-    file {"/etc/pki/nssdb":
-      ensure  => directory,
-      mode    => 755,
-      owner   => root,
-      group   => root,
-      require => File["/etc/pki"]
+    file {'/etc/pki/nssdb':
+      ensure  => 'directory',
+      mode    => '0755',
+      owner   => 'root',
+      group   => 'root',
+      require => File['/etc/pki']
     }
 
-    File["/etc/pki/nssdb"] -> Ipa::Clientinstall <<| |>>
+    File['/etc/pki/nssdb'] -> Ipa::Clientinstall <<| |>>
 
     if $ipa::client::sudo and $ipa::client::debiansudopkg {
       @package { 'sudo-ldap':
@@ -120,12 +122,12 @@ class ipa::client (
                       'set 1000000/control required',
                       'set 1000000/module pam_mkhomedir.so',
                       'set 1000000/argument umask=0022'],
-          onlyif  => "match *[type='session'][module='pam_mkhomedir.so'][argument='umask=0022'] size == 0"
+          onlyif  => 'match *[type="session"][module="pam_mkhomedir.so"][argument="umask=0022"] size == 0'
       }
     }
   }
 
-  @@ipa::hostadd { "$::fqdn":
+  @@ipa::hostadd { $::fqdn:
     otp      => $ipa::client::otp,
     desc     => $ipa::client::desc,
     clientos => $::lsbdistdescription,
