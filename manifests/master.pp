@@ -40,7 +40,7 @@ class ipa::master (
   $selfsign      = {}
 ) {
 
-  Ipa::Serverinstall[$::fqdn] -> Service['ipa'] -> File['/etc/ipa/primary'] -> Ipa::Hostadd <<| |>> -> Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>> -> Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>> -> Ipa::Createreplicas[$::fqdn]
+  Ipa::Serverinstall[$::fqdn] -> Ipa::Service[$::fqdn] -> File['/etc/ipa/primary'] -> Ipa::Hostadd <<| |>> -> Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>> -> Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>> -> Ipa::Createreplicas[$::fqdn]
 
   Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>>
   Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>>
@@ -89,8 +89,6 @@ class ipa::master (
     realize Package['kstart']
   }
 
-  realize Service['ipa']
-
   if $ipa::master::dns {
     if size($ipa::master::forwarders) > 0 {
       $forwarderopts = join(prefix($ipa::master::forwarders, '--forwarder '), ' ')
@@ -127,8 +125,10 @@ class ipa::master (
     http_pin      => $ipa::master::http_pin,
     subject       => $ipa::master::subject,
     selfsign      => $ipa::master::selfsign,
-    require       => Package[$ipa::master::svrpkg],
-    before        => Service['ipa']
+    require       => Package[$ipa::master::svrpkg]
+  }
+
+  ipa::service { $::fqdn:
   }
 
   ipa::createreplicas { $::fqdn:
