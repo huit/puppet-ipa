@@ -200,10 +200,6 @@ class ipa (
         svrpkg  => $ipa::svrpkg,
         clntpkg => $ipa::clntpkg
       }
-
-      if $ipa::sssd {
-        realize Service['sssd']
-      }
     }
   }
 

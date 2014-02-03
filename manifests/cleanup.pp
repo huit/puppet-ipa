@@ -1,3 +1,6 @@
+# Definition: ipa::cleanup
+#
+# Cleans up an IPA installation
 define ipa::cleanup (
   $svrpkg  = {},
   $clntpkg = {}
@@ -10,7 +13,7 @@ define ipa::cleanup (
 
   $pkgcmd = regsubst($pkgrmcmd,'\s.*$','')
 
-  Cron["k5start_admin"] -> Cron["k5start_root"] -> Exec["cleanup-${name}"]
+  Cron['k5start_admin'] -> Cron['k5start_root'] -> Exec["cleanup-${name}"]
 
   exec { "cleanup-${name}":
     command   => "/bin/bash -c \"if [ -x /usr/sbin/ipactl ]; then /usr/sbin/ipactl stop ; fi ;\
@@ -31,14 +34,14 @@ define ipa::cleanup (
   }
 
   Cron <|title == 'k5start_root'|> {
-    ensure  => "absent",
+    ensure  => 'absent',
     require => undef
   }
 
-  cron { "k5start_admin":
-    ensure  => "absent",
+  cron { 'k5start_admin':
+    ensure  => 'absent',
     command => "/usr/bin/k5start -f ${::ipa_adminhomedir}/admin.keytab -U -o admin -k /tmp/krb5cc_${::ipa_adminuidnumber} > /dev/null 2>&1",
     user    => 'root',
-    minute  => "*/1"
-  }<- notify { "Running IPA install cleanup, please wait.": }
+    minute  => '*/1'
+  } <- notify { 'Running IPA install cleanup, please wait.': }
 }
