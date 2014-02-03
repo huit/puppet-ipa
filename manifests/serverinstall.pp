@@ -27,7 +27,14 @@ define ipa::serverinstall (
       command   => shellquote('/usr/sbin/ipa-server-install',"--hostname=${host}","--realm=${realm}","--domain=${domain}","--admin-password=${adminpw}","--ds-password=${dspw}",$dnsopt,$ntpopt,'--external-ca','--unattended'),
       timeout   => '0',
       creates   => '/root/ipa.csr',
+      notify    => Exec["print-csr-${host}"],
       logoutput => 'on_failure'
+    }
+
+    exec { "print-csr-${host}":
+      command     => '/usr/bin/openssl req -in /root/ipa.csr',
+      refreshonly => true,
+      logoutput   => true
     }
 
     if is_string($extcertpath) and is_string($extcapath) {
