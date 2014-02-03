@@ -14,8 +14,19 @@
 #  $dspw = undef - Defines the IPA directory services password.
 #  $otp = undef - Defines an IPA client one-time-password.
 #  $dns = false - Controls the option to configure a DNS zone with the IPA master setup.
-#  $fixedprimary = false = Configure sssd to use a fixed server as the primary IPA server.
+#  $fixedprimary = false - Configure sssd to use a fixed server as the primary IPA server.
 #  $forwarders = [] - Defines an array of DNS forwarders to use when DNS is setup. An empty list will use the Root Nameservers.
+#  $extcaopt = false - Controls the option to configure an external CA.
+#  $extcertpath = undef - Defines a file path to the external certificate file. Somewhere under /root is recommended.
+#  $extcert = undef - The X.509 certificate in base64 encoded format.
+#  $extcapath = undef - Defines a file path to the external CA certificate file. Somewhere under /root is recommended.
+#  $extca = undef - The X.509 CA certificate in base64 encoded format.
+#  $dirsrv_pkcs12 = undef - PKCS#12 file containing the Directory Server SSL Certificate, also corresponds to the Puppet fileserver path under fileserverconfig for $confdir/files/ipa
+#  $http_pkcs12 = undef - The PKCS#12 file containing the Apache Server SSL Certificate, also corresponds to the Puppet fileserver path under fileserverconfig for $confdir/files/ipa
+#  $dirsrv_pin = undef - The password of the Directory Server PKCS#12 file.
+#  $http_pin = undef - The password of the Apache Server PKCS#12 file.
+#  $subject = undef - The certificate subject base.
+#  $selfsign = false - Configure a self-signed CA instance for issuing server certificates instead of using dogtag for certificates.
 #  $loadbalance = false - Controls the option to include any additional hostnames to be used in a load balanced IPA client configuration.
 #  $ipaservers = [] - Defines an array of additional hostnames to be used in a load balanced IPA client configuration.
 #  $mkhomedir = false - Controls the option to create user home directories on first login.
@@ -72,7 +83,7 @@ class ipa (
   $dirsrv_pin    = undef,
   $http_pin      = undef,
   $subject       = undef,
-  $selfsign      = undef,
+  $selfsign      = false,
   $loadbalance   = false,
   $ipaservers    = [],
   $mkhomedir     = false,

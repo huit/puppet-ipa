@@ -107,6 +107,72 @@ Defines an array of DNS forwarders to use when DNS is setup. An empty list will 
 
 Defaults to '[]'.
 
+####`extcaopt`
+
+Controls the option to configure an external CA.
+
+Defaults to 'false'
+
+####`extcertpath`
+
+Defines a file path to the external certificate file. Somewhere under /root is recommended.
+
+Defaults to 'undef'
+
+####`extcert`
+
+The X.509 certificate in base64 encoded format.
+
+Defaults to 'undef'
+
+####`extcapath`
+
+Defines a file path to the external CA certificate file. Somewhere under /root is recommended.
+
+Defaults ro 'undef'
+
+####`extca`
+
+The X.509 CA certificate in base64 encoded format.
+
+Defaults to 'undef'
+
+####`dirsrv_pkcs12`
+
+PKCS#12 file containing the Directory Server SSL Certificate, also corresponds to the Puppet fileserver path under fileserverconfig for $confdir/files/ipa
+
+Defaults to 'undef'
+
+####`http_pkcs12`
+
+The PKCS#12 file containing the Apache Server SSL Certificate, also corresponds to the Puppet fileserver path under fileserverconfig for $confdir/files/ipa
+
+Defaults to 'undef'
+
+####`dirsrv_pin`
+
+The password of the Directory Server PKCS#12 file.
+
+Defaults to 'undef'
+
+####`http_pin`
+
+The password of the Apache Server PKCS#12 file.
+
+Defaults to 'undef'
+
+####`subject`
+
+The certificate subject base.
+
+Defaults to 'undef'
+
+####`selfsign`
+
+Configure a self-signed CA instance for issuing server certificates instead of using dogtag for certificates.
+
+Defaults to 'false'
+
 ####`loadbalance`
 
 Controls the option to include any additional hostnames to be used in a load balanced IPA client configuration.
