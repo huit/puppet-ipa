@@ -22,8 +22,6 @@ define ipa::serverinstall (
   $selfsign      = {}
 ) {
 
-  Exec["serverinstall-${host}"] -> Ipa::Flushcache["server-${host}"]
-
   if $extcaopt {
     exec { "extca-serverinstall-${host}":
       command   => shellquote('/usr/sbin/ipa-server-install',"--hostname=${host}","--realm=${realm}","--domain=${domain}","--admin-password=${adminpw}","--ds-password=${dspw}",$dnsopt,$ntpopt,'--external-ca','--unattended'),
