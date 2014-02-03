@@ -1,6 +1,6 @@
-# Definition: ipa::service
+# Class: ipa::service
 #
 # Realizes the IPA service for dependency handling
-define ipa::service {
+class ipa::service {
   realize Service['ipa']
 }

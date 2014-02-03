@@ -95,13 +95,12 @@ define ipa::serverinstall (
             timeout   => '0',
             unless    => '/usr/sbin/ipactl status >/dev/null 2>&1',
             creates   => '/etc/ipa/default.conf',
-            notify    => Ipa::Flushcache["server-${host}"],
+            notify    => [Class['ipa::service'],Ipa::Flushcache["server-${host}"]],
             require   => File[$extcertpath,$extcapath],
             logoutput => 'on_failure'
           }
 
-          ipa::service { $::fqdn:
-            require => Exec["complete-extca-serverinstall-${host}"]
+          class { 'ipa::service':
           }
         }
       }
@@ -112,12 +111,11 @@ define ipa::serverinstall (
       timeout   => '0',
       unless    => '/usr/sbin/ipactl status >/dev/null 2>&1',
       creates   => '/etc/ipa/default.conf',
-      notify    => Ipa::Flushcache["server-${host}"],
+      notify    => [Class['ipa::service'],Ipa::Flushcache["server-${host}"]],
       logoutput => 'on_failure'
     }
 
-    ipa::service { $::fqdn:
-      require => Exec["serverinstall-${host}"]
+    class { 'ipa::service':
     }
   }
 
