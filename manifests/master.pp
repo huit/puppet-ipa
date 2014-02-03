@@ -40,7 +40,7 @@ class ipa::master (
   $selfsign      = {}
 ) {
 
-  Ipa::Serverinstall[$::fqdn] -> Ipa::Service[$::fqdn] -> File['/etc/ipa/primary'] -> Ipa::Hostadd <<| |>> -> Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>> -> Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>> -> Ipa::Createreplicas[$::fqdn]
+  Ipa::Serverinstall[$::fqdn] -> File['/etc/ipa/primary'] -> Ipa::Hostadd <<| |>> -> Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>> -> Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>> -> Ipa::Createreplicas[$::fqdn]
 
   Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>>
   Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>>
@@ -126,9 +126,6 @@ class ipa::master (
     subject       => $ipa::master::subject,
     selfsign      => $ipa::master::selfsign,
     require       => Package[$ipa::master::svrpkg]
-  }
-
-  ipa::service { $::fqdn:
   }
 
   ipa::createreplicas { $::fqdn:

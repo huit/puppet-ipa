@@ -99,6 +99,10 @@ define ipa::serverinstall (
             require   => File[$extcertpath,$extcapath],
             logoutput => 'on_failure'
           }
+
+          ipa::service { $::fqdn:
+            require => Exec["complete-extca-serverinstall-${host}"]
+          }
         }
       }
     }
@@ -110,6 +114,10 @@ define ipa::serverinstall (
       creates   => '/etc/ipa/default.conf',
       notify    => Ipa::Flushcache["server-${host}"],
       logoutput => 'on_failure'
+    }
+
+    ipa::service { $::fqdn:
+      require => Exec["serverinstall-${host}"]
     }
   }
 
