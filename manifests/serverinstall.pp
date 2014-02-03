@@ -97,7 +97,7 @@ define ipa::serverinstall (
 
       if defined($extcertpath) and defined($extcapath) {
         if validate_absolute_path($extcertpath) and validate_absolute_path($extcapath) {
-          exec { "serverinstall-${host}":
+          exec { "complete-extca-serverinstall-${host}":
             command   => shellquote('/usr/sbin/ipa-server-install',"--external_cert_file=${extcertpath}","--external_ca_file=${extcapath}",$dirsrv_pkcs12opt,$http_pkcs12opt,$dirsrv_pinopt,$http_pinopt,$subjectopt,$selfsignopt,'--unattended'),
             timeout   => '0',
             unless    => '/usr/sbin/ipactl status >/dev/null 2>&1',
