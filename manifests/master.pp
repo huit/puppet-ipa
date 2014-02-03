@@ -11,22 +11,33 @@
 # Sample Usage:
 #
 class ipa::master (
-  $svrpkg      = {},
-  $dns         = {},
-  $forwarders  = [],
-  $realm       = {},
-  $domain      = {},
-  $ipaservers  = [],
-  $loadbalance = {},
-  $adminpw     = {},
-  $dspw        = {},
-  $sudo        = {},
-  $sudopw      = {},
-  $automount   = {},
-  $autofs      = {},
-  $kstart      = {},
-  $sssd        = {},
-  $ntp         = {},
+  $svrpkg        = {},
+  $dns           = {},
+  $forwarders    = [],
+  $realm         = {},
+  $domain        = {},
+  $ipaservers    = [],
+  $loadbalance   = {},
+  $adminpw       = {},
+  $dspw          = {},
+  $sudo          = {},
+  $sudopw        = {},
+  $automount     = {},
+  $autofs        = {},
+  $kstart        = {},
+  $sssd          = {},
+  $ntp           = {},
+  $extcaopt      = {},
+  $extcertpath   = {},
+  $extcert       = {},
+  $extcapath     = {},
+  $extca         = {},
+  $dirsrv_pkcs12 = {},
+  $http_pkcs12   = {},
+  $dirsrv_pin    = {},
+  $http_pin      = {},
+  $subject       = {},
+  $selfsign      = {}
 ) {
 
   Ipa::Serverinstall[$::fqdn] -> Service['ipa'] -> File['/etc/ipa/primary'] -> Ipa::Hostadd <<| |>> -> Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>> -> Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>> -> Ipa::Createreplicas[$::fqdn]
@@ -50,19 +61,19 @@ class ipa::master (
 
   if $ipa::master::automount {
     if $ipa::master::autofs {
-      realize Service["autofs"]
-      realize Package["autofs"]
+      realize Service['autofs']
+      realize Package['autofs']
     }
 
     Ipa::Configautomount <<| |>> {
       name    => $::fqdn,
       os      => $::osfamily,
-      notify  => Service["autofs"],
+      notify  => Service['autofs'],
       require => Ipa::Serverinstall[$::fqdn]
     }
   }
 
-  $principals = suffix(prefix([$::fqdn], "host/"), "@${ipa::master::realm}")
+  $principals = suffix(prefix([$::fqdn], 'host/'), "@${ipa::master::realm}")
 
   if $::osfamily != 'RedHat' {
     fail("Cannot configure an IPA master server on ${::operatingsystem} operating systems. Must be a RedHat-like operating system.")
@@ -71,11 +82,11 @@ class ipa::master (
   realize Package[$ipa::master::svrpkg]
 
   if $ipa::master::sssd {
-    realize Service["sssd"]
+    realize Service['sssd']
   }
 
   if $ipa::master::kstart {
-    realize Package["kstart"]
+    realize Package['kstart']
   }
 
   realize Service['ipa']
@@ -98,49 +109,60 @@ class ipa::master (
     default => ''
   }
 
-  ipa::serverinstall { "$::fqdn":
-    realm   => $ipa::master::realm,
-    domain  => $ipa::master::domain,
-    adminpw => $ipa::master::adminpw,
-    dspw    => $ipa::master::dspw,
-    dnsopt  => $ipa::master::dnsopt,
-    ntpopt  => $ipa::master::ntpopt,
-    require => Package[$ipa::master::svrpkg]
+  ipa::serverinstall { $::fqdn:
+    realm         => $ipa::master::realm,
+    domain        => $ipa::master::domain,
+    adminpw       => $ipa::master::adminpw,
+    dspw          => $ipa::master::dspw,
+    dnsopt        => $ipa::master::dnsopt,
+    ntpopt        => $ipa::master::ntpopt,
+    extcaopt      => $ipa::master::extcaopt,
+    extcertpath   => $ipa::master::extcertpath,
+    extcert       => $ipa::master::extcert,
+    extcapath     => $ipa::master::extcapath,
+    extca         => $ipa::master::extca,
+    dirsrv_pkcs12 => $ipa::master::dirsrv_pkcs12,
+    dirsrv_pin    => $ipa::master::dirsrv_pin,
+    http_pkcs12   => $ipa::master::http_pkcs12,
+    http_pin      => $ipa::master::http_pin,
+    subject       => $ipa::master::subject,
+    selfsign      => $ipa::master::selfsign,
+    require       => Package[$ipa::master::svrpkg]
   }
 
-  ipa::createreplicas { "$::fqdn":
+  ipa::createreplicas { $::fqdn:
   }
 
-  firewall { "101 allow IPA master TCP services (http,https,kerberos,kpasswd,ldap,ldaps)":
+  firewall { '101 allow IPA master TCP services (http,https,kerberos,kpasswd,ldap,ldaps)':
     ensure => 'present',
     action => 'accept',
     proto  => 'tcp',
     dport  => ['80','88','389','443','464','636']
   }
 
-  firewall { "102 allow IPA master UDP services (kerberos,kpasswd,ntp)":
+  firewall { '102 allow IPA master UDP services (kerberos,kpasswd,ntp)':
     ensure => 'present',
     action => 'accept',
     proto  => 'udp',
     dport  => ['88','123','464']
   }
 
-  @@ipa::replicapreparefirewall { "$::fqdn":
+  @@ipa::replicapreparefirewall { $::fqdn:
     source => $::ipaddress,
     tag    => "ipa-replica-prepare-firewall-${ipa::master::domain}"
   }
 
-  @@ipa::masterreplicationfirewall { "$::fqdn":
+  @@ipa::masterreplicationfirewall { $::fqdn:
     source => $::ipaddress,
     tag    => "ipa-master-replication-firewall-${ipa::master::domain}"
   }
 
-  @@ipa::masterprincipal { "$::fqdn":
+  @@ipa::masterprincipal { $::fqdn:
     realm => $ipa::master::realm,
     tag   => "ipa-master-principal-${ipa::master::domain}"
   }
 
-  @@ipa::clientinstall { "$::fqdn":
+  @@ipa::clientinstall { $::fqdn:
     masterfqdn => $::fqdn,
     domain     => $ipa::master::domain,
     realm      => $ipa::master::realm,
@@ -151,7 +173,7 @@ class ipa::master (
   }
 
   if $ipa::master::sudo {
-    @@ipa::configsudo { "$::fqdn":
+    @@ipa::configsudo { $::fqdn:
       masterfqdn => $::fqdn,
       domain     => $ipa::master::domain,
       adminpw    => $ipa::master::adminpw,
@@ -160,7 +182,7 @@ class ipa::master (
   }
 
   if $ipa::master::automount {
-    @@ipa::configautomount { "$::fqdn":
+    @@ipa::configautomount { $::fqdn:
       masterfqdn => $::fqdn,
       os         => $::osfamily,
       domain     => $ipa::master::domain,
