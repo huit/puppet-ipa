@@ -127,7 +127,8 @@ class ipa::master (
     http_pin      => $ipa::master::http_pin,
     subject       => $ipa::master::subject,
     selfsign      => $ipa::master::selfsign,
-    require       => Package[$ipa::master::svrpkg]
+    require       => Package[$ipa::master::svrpkg],
+    before        => Service['ipa']
   }
 
   ipa::createreplicas { $::fqdn:

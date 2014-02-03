@@ -22,6 +22,8 @@ define ipa::serverinstall (
   $selfsign      = {}
 ) {
 
+  Exec["serverinstall-${host}"] -> Ipa::Flushcache["server-${host}"]
+
   if $extcaopt {
     exec { "extca-serverinstall-${host}":
       command   => shellquote('/usr/sbin/ipa-server-install',"--hostname=${host}","--realm=${realm}","--domain=${domain}","--admin-password=${adminpw}","--ds-password=${dspw}",$dnsopt,$ntpopt,'--external-ca','--unattended'),
@@ -97,7 +99,7 @@ define ipa::serverinstall (
 
       if defined($extcertpath) and defined($extcapath) {
         if validate_absolute_path($extcertpath) and validate_absolute_path($extcapath) {
-          exec { "complete-extca-serverinstall-${host}":
+          exec { "serverinstall-${host}":
             command   => shellquote('/usr/sbin/ipa-server-install',"--external_cert_file=${extcertpath}","--external_ca_file=${extcapath}",$dirsrv_pkcs12opt,$http_pkcs12opt,$dirsrv_pinopt,$http_pinopt,$subjectopt,$selfsignopt,'--unattended'),
             timeout   => '0',
             unless    => '/usr/sbin/ipactl status >/dev/null 2>&1',
