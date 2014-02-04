@@ -40,7 +40,7 @@ class ipa::master (
   $selfsign      = {}
 ) {
 
-  Ipa::Serverinstall[$::fqdn] ->  File['/etc/ipa/primary'] -> Ipa::Hostadd <<| |>> -> Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>> -> Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>> -> Ipa::Createreplicas[$::fqdn]
+  Ipa::Serverinstall[$::fqdn] -> Class['ipa::service'] ->  File['/etc/ipa/primary'] -> Ipa::Hostadd <<| |>> -> Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>> -> Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>> -> Ipa::Createreplicas[$::fqdn]
 
   Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>>
   Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>>
@@ -55,7 +55,7 @@ class ipa::master (
     Ipa::Configsudo <<| |>> {
       name    => $::fqdn,
       os      => "${::osfamily}${::lsbmajdistrelease}",
-      require => Ipa::Serverinstall[$::fqdn]
+      require => [Ipa::Serverinstall[$::fqdn],Class['ipa::service']]
     }
   }
 
@@ -69,7 +69,7 @@ class ipa::master (
       name    => $::fqdn,
       os      => $::osfamily,
       notify  => Service['autofs'],
-      require => Ipa::Serverinstall[$::fqdn]
+      require => [Ipa::Serverinstall[$::fqdn],Class['ipa::service']]
     }
   }
 
@@ -193,7 +193,7 @@ class ipa::master (
       domain     => $ipa::master::domain,
       ipaservers => $ipa::master::ipaservers,
       mkhomedir  => $ipa::master::mkhomedir,
-      require    => Ipa::Serverinstall[$::fqdn]
+      require    => [Ipa::Serverinstall[$::fqdn],Class['ipa::service']]
     }
   }
 }
