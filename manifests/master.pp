@@ -46,6 +46,8 @@ class ipa::master (
   Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>>
   Ipa::Hostadd <<| |>>
 
+  include ipa::service
+
   file { '/etc/ipa/primary':
     ensure  => present,
     content => 'Added by HUIT IPA Puppet module: designates primary master - do not remove.'
