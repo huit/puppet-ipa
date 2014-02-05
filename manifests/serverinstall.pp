@@ -103,6 +103,8 @@ define ipa::serverinstall (
           class { 'ipa::service':
           }
         }
+      } else {
+        fail('To continue, the external CA cert will need to be defined.')
       }
     }
   } elsif ! $extcaopt {
