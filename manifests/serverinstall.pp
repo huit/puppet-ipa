@@ -30,6 +30,12 @@ define ipa::serverinstall (
       logoutput => 'on_failure'
     }
 
+    ipa::message { "warning-extca-${host}":
+      type    => 'warning',
+      message => 'To continue, the external CA certificate will need to be defined',
+      require => Exec["extca-serverinstall-${host}"]
+    }
+
     if is_string($extcertpath) and is_string($extcapath) {
       file { $extcertpath:
         ensure  => 'file',
@@ -103,12 +109,6 @@ define ipa::serverinstall (
           class { 'ipa::service':
           }
         }
-      }
-    } else {
-      ipa::message { "warning-extca-${host}":
-        type    => 'warning',
-        message => 'To continue, the external CA certificate will need to be defined',
-        require => Exec["extca-serverinstall-${host}"]
       }
     }
   } elsif ! $extcaopt {
