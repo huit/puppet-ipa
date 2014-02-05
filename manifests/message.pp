@@ -2,9 +2,9 @@
 #
 # Sends a notification or a fail message to the log during catalog compilation
 define ipa::message (
-  $type
+  $type,
+  $message
 ) {
-  $message = $name
   case $type {
     'debug': {
       debug($message)

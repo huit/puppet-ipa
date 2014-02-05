@@ -105,8 +105,9 @@ define ipa::serverinstall (
         }
       }
     } else {
-      ipa::message { 'To continue, the external CA certificate will need to be defined':
-        type    => 'fail',
+      ipa::message { "warning-extca-${host}":
+        type    => 'warning',
+        message => 'To continue, the external CA certificate will need to be defined',
         require => Exec["extca-serverinstall-${host}"]
       }
     }
