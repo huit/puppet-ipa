@@ -27,13 +27,13 @@ define ipa::serverinstall (
       command   => shellquote('/usr/sbin/ipa-server-install',"--hostname=${host}","--realm=${realm}","--domain=${domain}","--admin-password=${adminpw}","--ds-password=${dspw}",$dnsopt,$ntpopt,'--external-ca','--unattended'),
       timeout   => '0',
       creates   => '/root/ipa.csr',
+      notify    => [Class['ipa::service'],Ipa::Message["warning-extca-${host}"]],
       logoutput => 'on_failure'
     }
 
     ipa::message { "warning-extca-${host}":
       type    => 'warning',
       message => 'To continue, the external CA certificate will need to be defined',
-      require => Exec["extca-serverinstall-${host}"]
     }
 
     if is_string($extcertpath) and is_string($extcapath) {
@@ -105,9 +105,6 @@ define ipa::serverinstall (
             require   => File[$extcertpath,$extcapath],
             logoutput => 'on_failure'
           }
-
-          class { 'ipa::service':
-          }
         }
       }
     }
@@ -120,9 +117,9 @@ define ipa::serverinstall (
       notify    => [Class['ipa::service'],Ipa::Flushcache["server-${host}"]],
       logoutput => 'on_failure'
     }
+  }
 
-    class { 'ipa::service':
-    }
+  class { 'ipa::service':
   }
 
   ipa::flushcache { "server-${host}":
