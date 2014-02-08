@@ -55,8 +55,8 @@ define ipa::configsudo (
   }
 
   exec { "setupnisdomain-${host}":
-    command => "nisdomainname ${domain}",
-    unless  => "[[ $(nisdomainname) == ${domain} ]]",
+    command => "/bin/nisdomainname ${domain}",
+    unless  => "/usr/bin/test $(/bin/nisdomainname) = ${domain}",
     require => Exec["set-sudopw-${host}"]
   }
 }
