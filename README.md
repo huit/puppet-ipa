@@ -107,7 +107,7 @@ Defines an array of DNS forwarders to use when DNS is setup. An empty list will 
 
 Defaults to '[]'.
 
-####`extcaopt`
+####`extca`
 
 Controls the option to configure an external CA.
 
@@ -131,7 +131,7 @@ Defines a file path to the external CA certificate file. Somewhere under /root i
 
 Defaults ro 'undef'
 
-####`extca`
+####`extcacert`
 
 The X.509 CA certificate in base64 encoded format.
 
