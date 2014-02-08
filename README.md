@@ -1,4 +1,5 @@
 # IPA Puppet module
+[![Build Status](https://travis-ci.org/huit/puppet-ipa.png?branch=master)](https://travis-ci.org/huit/puppet-ipa)
 
 ## Overview
 
@@ -9,9 +10,15 @@ huit/puppet-ipa aims at the management and configuration of a complete IPA envir
 To start, an IPA master will be required as the beginning of the LDAP/Kerberos environment. IPA replicas can
 then be added for additional resiliancy.
 
-IPA replica servers will automatically be configured with a replication agreement on the IPA master server.
+The IPA primary master server will take a minimum of two Puppet runs to fully configure. This is because the ipa_adminhomedir,
+ipa_adminuidnumber and ipa_replicascheme facts are not available until the IPA primary master is installed and operational.
+These facts are necessary to automatically configure clients and replicas.
 
-All nodes added as clients will automatically be added to the IPA domain.
+IPA replica servers will be automatically configured with a replication agreement on the IPA primary master server.
+
+All Puppet nodes added as clients will automatically be added to the IPA domain through exported resources.
+
+Multiple IPA domains are supported.
 
 A cleanup parameter has been included to remove the IPA server or client packages from nodes.
 
@@ -88,6 +95,84 @@ Controls the option to configure a DNS zone with the IPA master setup.
 
 Defaults to 'false'.
 
+####`fixedprimary`
+
+Configure sssd to use a fixed server as the primary IPA server.
+
+Defaults to 'false'.
+
+####`forwarders`
+
+Defines an array of DNS forwarders to use when DNS is setup. An empty list will use the Root Nameservers.
+
+Defaults to '[]'.
+
+####`extcaopt`
+
+Controls the option to configure an external CA.
+
+Defaults to 'false'
+
+####`extcertpath`
+
+Defines a file path to the external certificate file. Somewhere under /root is recommended.
+
+Defaults to 'undef'
+
+####`extcert`
+
+The X.509 certificate in base64 encoded format.
+
+Defaults to 'undef'
+
+####`extcapath`
+
+Defines a file path to the external CA certificate file. Somewhere under /root is recommended.
+
+Defaults ro 'undef'
+
+####`extca`
+
+The X.509 CA certificate in base64 encoded format.
+
+Defaults to 'undef'
+
+####`dirsrv_pkcs12`
+
+PKCS#12 file containing the Directory Server SSL Certificate, also corresponds to the Puppet fileserver path under fileserverconfig for $confdir/files/ipa
+
+Defaults to 'undef'
+
+####`http_pkcs12`
+
+The PKCS#12 file containing the Apache Server SSL Certificate, also corresponds to the Puppet fileserver path under fileserverconfig for $confdir/files/ipa
+
+Defaults to 'undef'
+
+####`dirsrv_pin`
+
+The password of the Directory Server PKCS#12 file.
+
+Defaults to 'undef'
+
+####`http_pin`
+
+The password of the Apache Server PKCS#12 file.
+
+Defaults to 'undef'
+
+####`subject`
+
+The certificate subject base.
+
+Defaults to 'undef'
+
+####`selfsign`
+
+Configure a self-signed CA instance for issuing server certificates instead of using dogtag for certificates.
+
+Defaults to 'false'
+
 ####`loadbalance`
 
 Controls the option to include any additional hostnames to be used in a load balanced IPA client configuration.
@@ -144,13 +229,13 @@ Defaults to 'true'.
 
 ####`sssdtoolspkg`
 
-SSSD tools package.
+SSSD tools package name.
 
 Defaults to 'sssd-tools'
 
 ####`sssd`
 
-Controls the option to start the SSSD service.
+Controls the option to start the SSSD service if its not defined elsewhere. Note: Set to false if the SSSD service is defined in your site specific modules.
 
 Defaults to 'true'.
 
@@ -186,13 +271,13 @@ Defaults to 'false'.
 
 ####`svrpkg`
 
-IPA server package.
+IPA server package name.
 
 Defaults to 'ipa-server'.
 
 ####`clntpkg`
 
-IPA client package.
+IPA client package name.
 
 Defaults to 'ipa-client'.
 
@@ -204,7 +289,7 @@ Defaults to 'true'.
 
 ####`ldaputilspkg`
 
-LDAP utilities package.
+LDAP utilities package name.
 
 Defaults to 'openldap-clients'.
 

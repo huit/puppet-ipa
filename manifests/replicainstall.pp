@@ -1,3 +1,6 @@
+# Definition: ipa::replicainstall
+#
+# Installs an IPA replica
 define ipa::replicainstall (
   $host    = $name,
   $adminpw = {},
@@ -12,23 +15,23 @@ define ipa::replicainstall (
     command   => "/usr/bin/test -e ${file}",
     tries     => '60',
     try_sleep => '60',
-    unless    => "/usr/sbin/ipactl status >/dev/null 2>&1"
+    unless    => '/usr/sbin/ipactl status >/dev/null 2>&1'
   }
 
   exec { "clientuninstall-${host}":
-    command   => "/usr/sbin/ipa-client-install --uninstall --unattended",
+    command     => '/usr/sbin/ipa-client-install --uninstall --unattended',
     refreshonly => true
   }
 
   exec { "replicainstall-${host}":
     command     => "/usr/sbin/ipa-replica-install --admin-password=${adminpw} --password=${dspw} --skip-conncheck --unattended ${file}",
     timeout     => '0',
-    logoutput   => "on_failure",
+    logoutput   => 'on_failure',
     refreshonly => true
   }
 
   exec { "removereplicainfo-${host}":
     command     => "/bin/rm -f ${file}",
     refreshonly => true
-  }<- notify { "Running IPA replica install, please wait.": }
+  }
 }

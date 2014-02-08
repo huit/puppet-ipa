@@ -26,14 +26,14 @@ class ipa::replica (
   Ipa::Masterprincipal <<| tag == "ipa-master-principal-${ipa::replica::domain}" |>>
 
   if $::osfamily != "RedHat" {
-    fail("Cannot configure an IPA replica server on ${::operatingsystem} operating systems. Must be a RedHat-like operating system.") 
+    fail("Cannot configure an IPA replica server on ${::operatingsystem} operating systems. Must be a RedHat-like operating system.")
   }
 
-  realize Package[$ipa::replica::svrpkg] 
+  realize Package[$ipa::replica::svrpkg]
 
   realize Service['ipa']
 
-  if $ipa::replica::kstart { 
+  if $ipa::replica::kstart {
     realize Package["kstart"]
   }
 
