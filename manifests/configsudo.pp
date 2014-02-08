@@ -1,3 +1,6 @@
+# Definition: ipa::configsudo
+#
+# Configures sudoers in LDAP
 define ipa::configsudo (
   $host       = $name,
   $os         = {},
@@ -14,9 +17,9 @@ define ipa::configsudo (
   augeas { "nsswitch-sudoers-${host}":
     context => '/files/etc/nsswitch.conf',
     changes => [
-      "set database[. = 'sudoers'] sudoers",
-      "set database[. = 'sudoers']/service[1] files",
-      "set database[. = 'sudoers']/service[2] ldap"
+      'set database[. = "sudoers"] sudoers',
+      'set database[. = "sudoers"]/service[1] files',
+      'set database[. = "sudoers"]/service[2] ldap'
     ]
   }
 
@@ -25,18 +28,18 @@ define ipa::configsudo (
       context => '/files/etc/ldap.conf',
       changes => [
         "set binddn uid=sudo,cn=sysaccounts,cn=etc,${dc}",
-        "set bindpw $sudopw",
-        "set ssl start_tls",
-        "set tls_cacertfile /etc/ipa/ca.crt",
-        "set tls_checkpeer yes",
-        "set bind_timelimit 5",
-        "set timelimit 15",
+        "set bindpw ${sudopw}",
+        'set ssl start_tls',
+        'set tls_cacertfile /etc/ipa/ca.crt',
+        'set tls_checkpeer yes',
+        'set bind_timelimit 5',
+        'set timelimit 15',
         "set sudoers_base ou=sudoers,${dc}"
       ]
     }
   } else {
     file { "sudo-ldap-${host}":
-      path    => "/etc/sudo-ldap.conf",
+      path    => '/etc/sudo-ldap.conf',
       owner   => 'root',
       group   => 'root',
       mode    => '0640',
@@ -47,7 +50,7 @@ define ipa::configsudo (
   exec { "set-sudopw-${host}":
     command     => "/bin/bash -c \"LDAPTLS_REQCERT=never /usr/bin/ldappasswd -x -H ldaps://${masterfqdn} -D uid=admin,cn=users,cn=accounts,${dc} -w ${adminpw} -s ${sudopw} uid=sudo,cn=sysaccounts,cn=etc,${dc}\"",
     unless      => "/bin/bash -c \"LDAPTLS_REQCERT=never /usr/bin/ldapsearch -x -H ldaps://${masterfqdn} -D uid=sudo,cn=sysaccounts,cn=etc,${dc} -w ${sudopw} -b cn=sysaccounts,cn=etc,${dc} uid=sudo\"",
-    onlyif      => "/usr/bin/test $(/bin/hostname -f) = $masterfqdn",
-    logoutput   => "on_failure"
+    onlyif      => '/usr/sbin/ipactl status >/dev/null 2>&1',
+    logoutput   => 'on_failure'
   }
 }

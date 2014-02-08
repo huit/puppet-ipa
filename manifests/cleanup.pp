@@ -25,6 +25,7 @@ define ipa::cleanup (
                  if [ -e /etc/openldap/ldap.conf.ipabkp ]; then /bin/cp -f /etc/openldap/ldap.conf.ipabkp /etc/openldap/ldap.conf ; fi ;\
                  if [ -e /etc/krb5.conf.ipabkp ]; then /bin/cp -f /etc/krb5.conf.ipabkp /etc/krb5.conf ; fi ;\
                  if [ -e /etc/krb5.keytab ]; then /bin/mv -f /etc/krb5.keytab /etc/krb5.keytab.puppet-ipa.cleanup ; fi ;\
+                 if [ -e /root/ipa.csr ]; then /bin/mv -f /root/ipa.csr /root/ipa.csr.$(/bin/date +%s) ; fi ;\
                  if [ -d /var/lib/certmonger ]; then find /var/lib/certmonger -type f -exec /bin/rm -f '{}' \; ; fi ;\
                  if [ -d /var/lib/ipa ]; then /usr/bin/find /var/lib/ipa -type f -exec /bin/rm -f '{}' \; ; fi ;\
                  if [ -d /var/lib/ipa-client ]; then /usr/bin/find /var/lib/ipa-client -type f -exec /bin/rm -f '{}' \; ; fi ;\
