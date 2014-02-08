@@ -27,11 +27,11 @@ class ipa::master (
   $kstart        = {},
   $sssd          = {},
   $ntp           = {},
-  $extcaopt      = {},
+  $extca         = {},
   $extcertpath   = {},
   $extcert       = {},
-  $extcapath     = {},
-  $extca         = {},
+  $extcacertpath = {},
+  $extcacert     = {},
   $dirsrv_pkcs12 = {},
   $http_pkcs12   = {},
   $dirsrv_pin    = {},
@@ -47,7 +47,7 @@ class ipa::master (
   Ipa::Hostadd <<| |>>
 
   file { '/etc/ipa/primary':
-    ensure  => present,
+    ensure  => 'file',
     content => 'Added by HUIT IPA Puppet module: designates primary master - do not remove.'
   }
 
@@ -107,6 +107,11 @@ class ipa::master (
     default => ''
   }
 
+  $extcaopt = $extca ? {
+    true    => '--external-ca',
+    default => ''
+  }
+
   ipa::serverinstall { $::fqdn:
     realm         => $ipa::master::realm,
     domain        => $ipa::master::domain,
@@ -115,17 +120,27 @@ class ipa::master (
     dnsopt        => $ipa::master::dnsopt,
     ntpopt        => $ipa::master::ntpopt,
     extcaopt      => $ipa::master::extcaopt,
-    extcertpath   => $ipa::master::extcertpath,
-    extcert       => $ipa::master::extcert,
-    extcapath     => $ipa::master::extcapath,
-    extca         => $ipa::master::extca,
-    dirsrv_pkcs12 => $ipa::master::dirsrv_pkcs12,
-    dirsrv_pin    => $ipa::master::dirsrv_pin,
-    http_pkcs12   => $ipa::master::http_pkcs12,
-    http_pin      => $ipa::master::http_pin,
-    subject       => $ipa::master::subject,
-    selfsign      => $ipa::master::selfsign,
     require       => Package[$ipa::master::svrpkg]
+  }
+
+  if $extca {
+    class { 'ipa::master_extca':
+      extcertpath   => $ipa::master::extcertpath,
+      extcert       => $ipa::master::extcert,
+      extcacertpath => $ipa::master::extcacertpath,
+      extcacert     => $ipa::master::extcacert,
+      dirsrv_pkcs12 => $ipa::master::dirsrv_pkcs12,
+      http_pkcs12   => $ipa::master::http_pkcs12,
+      dirsrv_pin    => $ipa::master::dirsrv_pin,
+      http_pin      => $ipa::master::http_pin,
+      subject       => $ipa::master::subject,
+      selfsign      => $ipa::master::selfsign,
+      require       => Ipa::Serverinstall[$::fqdn]
+    }
+  } else {
+    class { 'ipa::service':
+      require => Ipa::Serverinstall[$::fqdn]
+    }
   }
 
   ipa::createreplicas { $::fqdn:
