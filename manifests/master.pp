@@ -96,7 +96,7 @@ class ipa::master (
     else {
       $forwarderopts = '--no-forwarders'
     }
-    $dnsopt = "--setup-dns ${forwarderopts}"
+    $dnsopt = ['--setup-dns', "${forwarderopts}"]
   }
   else {
     $dnsopt = ''
