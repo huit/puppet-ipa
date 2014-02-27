@@ -13,13 +13,13 @@ define ipa::serverinstall (
 ) {
 
   $host_          = shellquote($name)
-  $realm_         = shellquote(flatten($realm   ))
-  $domain_        = shellquote(flatten($domain  )) 
-  $adminpw_       = shellquote(flatten($adminpw )) 
-  $dspw_          = shellquote(flatten($dspw    )) 
-  $dnsopt_        = shellquote(flatten($dnsopt  )) 
-  $ntpopt_        = shellquote(flatten($ntpopt  )) 
-  $extcaopt_      = shellquote(flatten($extcaopt)) 
+  $realm_         = shellquote(flatten([$realm]   ))
+  $domain_        = shellquote(flatten([$domain  ])) 
+  $adminpw_       = shellquote(flatten([$adminpw ])) 
+  $dspw_          = shellquote(flatten([$dspw    ])) 
+  $dnsopt_        = shellquote(flatten([$dnsopt  ])) 
+  $ntpopt_        = shellquote(flatten([$ntpopt  ])) 
+  $extcaopt_      = shellquote(flatten([$extcaopt])) 
  
 
   exec { "serverinstall-${host}":
