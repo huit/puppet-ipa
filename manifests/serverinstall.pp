@@ -12,8 +12,18 @@ define ipa::serverinstall (
   $extcaopt      = {}
 ) {
 
+  $host          = shellquote($name)
+  $realm         = shellquote(flatten($realm   ))
+  $domain        = shellquote(flatten($domain  )) 
+  $adminpw       = shellquote(flatten($adminpw )) 
+  $dspw          = shellquote(flatten($dspw    )) 
+  $dnsopt        = shellquote(flatten($dnsopt  )) 
+  $ntpopt        = shellquote(flatten($ntpopt  )) 
+  $extcaopt      = shellquote(flatten($extcaopt)) 
+ 
+
   exec { "serverinstall-${host}":
-    command   => shellquote(flatten(['/usr/sbin/ipa-server-install',"--hostname=", "${host}","--realm=", "${realm}", "--domain=", "${domain}","--admin-password=", "${adminpw}","--ds-password=", "${dspw}",$dnsopt,$ntpopt,$extcaopt,'--unattended'])),
+    command   => join(['/usr/sbin/ipa-server-install',"--hostname=${host}","--realm=${realm}", "--domain=${domain}","--admin-password=${adminpw}","--ds-password=${dspw}",$dnsopt,$ntpopt,$extcaopt,'--unattended'], ' '),
     timeout   => '0',
     unless    => '/usr/sbin/ipactl status >/dev/null 2>&1',
     creates   => '/etc/ipa/default.conf',
