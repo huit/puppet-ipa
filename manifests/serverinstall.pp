@@ -12,18 +12,18 @@ define ipa::serverinstall (
   $extcaopt      = {}
 ) {
 
-  $host          = shellquote($name)
-  $realm         = shellquote(flatten($realm   ))
-  $domain        = shellquote(flatten($domain  )) 
-  $adminpw       = shellquote(flatten($adminpw )) 
-  $dspw          = shellquote(flatten($dspw    )) 
-  $dnsopt        = shellquote(flatten($dnsopt  )) 
-  $ntpopt        = shellquote(flatten($ntpopt  )) 
-  $extcaopt      = shellquote(flatten($extcaopt)) 
+  $host_          = shellquote($name)
+  $realm_         = shellquote(flatten($realm   ))
+  $domain_        = shellquote(flatten($domain  )) 
+  $adminpw_       = shellquote(flatten($adminpw )) 
+  $dspw_          = shellquote(flatten($dspw    )) 
+  $dnsopt_        = shellquote(flatten($dnsopt  )) 
+  $ntpopt_        = shellquote(flatten($ntpopt  )) 
+  $extcaopt_      = shellquote(flatten($extcaopt)) 
  
 
   exec { "serverinstall-${host}":
-    command   => join(['/usr/sbin/ipa-server-install',"--hostname=${host}","--realm=${realm}", "--domain=${domain}","--admin-password=${adminpw}","--ds-password=${dspw}",$dnsopt,$ntpopt,$extcaopt,'--unattended'], ' '),
+    command   => join(['/usr/sbin/ipa-server-install',"--hostname=${host_}","--realm=${realm_}", "--domain=${domain_}","--admin-password=${adminpw_}","--ds-password=${dspw_}",$dnsopt_,$ntpopt_,$extcaopt_,'--unattended'], ' '),
     timeout   => '0',
     unless    => '/usr/sbin/ipactl status >/dev/null 2>&1',
     creates   => '/etc/ipa/default.conf',
