@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe "on RedHat platform" do
-  let(:facts) { { :osfamily => 'RedHat' } }
-  describe 'ipa', :type => :class do
+describe 'ipa', :type => :class do
+  describe "on RedHat platform" do
+    let(:facts) { { :osfamily => 'RedHat' } }
 
     context 'with master => true' do
       describe "ipa::init" do
