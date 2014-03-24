@@ -5,7 +5,7 @@ describe 'ipa', :type => :class do
     let(:facts) { { :osfamily => 'RedHat' } }
 
     context 'with master => true' do
-      describe "ipa::init" do
+      describe "ipa" do
         let(:params) {
           {
             :master  => true,
@@ -17,7 +17,7 @@ describe 'ipa', :type => :class do
           }
         }
         it { should contain_class('ipa::master') }
-        it { should contain_package('ipa') }
+        it { should contain_package('ipa-server') }
       end
     end
   end
