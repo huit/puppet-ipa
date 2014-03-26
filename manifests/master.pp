@@ -96,10 +96,11 @@ class ipa::master (
     else {
       $forwarderopts = '--no-forwarders'
     }
-    $dnsopt = "--setup-dns ${forwarderopts}"
+    $dnsopt = '--setup-dns'
   }
   else {
     $dnsopt = ''
+    $forwarderopts = ''
   }
 
   $ntpopt = $ipa::master::ntp ? {
@@ -118,6 +119,7 @@ class ipa::master (
     adminpw       => $ipa::master::adminpw,
     dspw          => $ipa::master::dspw,
     dnsopt        => $ipa::master::dnsopt,
+    forwarderopts => $ipa::master::forwarderopts,
     ntpopt        => $ipa::master::ntpopt,
     extcaopt      => $ipa::master::extcaopt,
     require       => Package[$ipa::master::svrpkg]
