@@ -91,25 +91,25 @@ class ipa::master (
 
   if $ipa::master::dns {
     if size($ipa::master::forwarders) > 0 {
-      $forwarderopts = join(prefix($ipa::master::forwarders, '--forwarder '), ' ')
+      $forwarderopts = prefix($ipa::master::forwarders, '--forwarder ')
     }
     else {
-      $forwarderopts = '--no-forwarders'
+      $forwarderopts = ['--no-forwarders']
     }
-    $dnsopt = "--setup-dns ${forwarderopts}"
+    $dnsopt = ['--setup-dns', "${forwarderopts}"]
   }
   else {
-    $dnsopt = ''
+    $dnsopt = []
   }
 
   $ntpopt = $ipa::master::ntp ? {
-    false   => '--no-ntp',
-    default => ''
+    false   => ['--no-ntp'],
+    default => []
   }
 
   $extcaopt = $extca ? {
-    true    => '--external-ca',
-    default => ''
+    true    => ['--external-ca'],
+    default => []
   }
 
   ipa::serverinstall { $::fqdn:
