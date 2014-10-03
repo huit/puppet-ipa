@@ -91,7 +91,7 @@ class ipa::master (
 
   if $ipa::master::dns {
     if size($ipa::master::forwarders) > 0 {
-      $forwarderopts = join(prefix($ipa::master::forwarders), '--forwarder '), ' ')
+      $forwarderopts = join(prefix(shellquote($ipa::master::forwarders), '--forwarder '), ' ')
     }
     else {
       $forwarderopts = '--no-forwarders'
