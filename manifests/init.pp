@@ -109,7 +109,8 @@ class ipa (
   $ldaputilspkg  = $::osfamily ? {
     Debian  => 'ldap-utils',
     default => 'openldap-clients',
-  }
+  },
+  $idstart       = false
 ) {
 
   @package { $ipa::svrpkg:
@@ -185,6 +186,10 @@ class ipa (
       validate_re($ipa::adminpw,'^.........*$','Parameter "adminpw" must be at least 8 characters long')
       validate_re($ipa::dspw,'^.........*$','Parameter "dspw" must be at least 8 characters long')
     }
+    if $ipa::master and $ipa::idstart {
+      validate_re($ipa::idstart,'^......*$', 'Parameter "idstart" must be an integer greater than 10000 ')
+      validate_re($ipa::idstart,'^\d+$', 'Parameter "idstart" must be an integer ')
+    }
 
     if ! $ipa::domain {
       fail('Required parameter "domain" missing')
@@ -242,7 +247,8 @@ class ipa (
       dirsrv_pin    => $ipa::dirsrv_pin,
       http_pin      => $ipa::http_pin,
       subject       => $ipa::subject,
-      selfsign      => $ipa::selfsign
+      selfsign      => $ipa::selfsign,
+      idstart       => $ipa::idstart
     }
 
     if ! $ipa::adminpw {
