@@ -38,6 +38,7 @@ class ipa::replica (
   }
 
   if $ipa::replica::sssd {
+    realize Package['sssd-common']
     realize Service["sssd"]
   }
 

@@ -145,9 +145,14 @@ class ipa (
   }
 
   if $ipa::sssd {
+    @package { 'sssd-common':
+      ensure => installed
+    }
+
     @service { 'sssd':
-      ensure => 'running',
-      enable => true
+      ensure  => 'running',
+      enable  => true,
+      require => Package['sssd-common']
     }
   }
 

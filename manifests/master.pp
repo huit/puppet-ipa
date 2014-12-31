@@ -82,6 +82,7 @@ class ipa::master (
   realize Package[$ipa::master::svrpkg]
 
   if $ipa::master::sssd {
+    realize Package['sssd-common']
     realize Service['sssd']
   }
 
