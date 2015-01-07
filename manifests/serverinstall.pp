@@ -14,6 +14,8 @@ define ipa::serverinstall (
   $idstartopt    = {}
 ) {
 
+  anchor { 'ipa::serverinstall::start': }
+
   exec { "serverinstall-${host}":
     command   => "/usr/sbin/ipa-server-install --hostname=${host} --realm=${realm} --domain=${domain} --admin-password=${adminpw} --ds-password=${dspw} $dnsopt $forwarderopts $ntpopt $extcaopt $idstartopt --unattended",
     timeout   => '0',
@@ -24,10 +26,17 @@ define ipa::serverinstall (
   }
 
   ipa::flushcache { "server-${host}":
-    notify => Ipa::Adminconfig[$host],
+    notify  => Ipa::Adminconfig[$host],
+    require => Anchor['ipa::serverinstall::start']
   }
 
   ipa::adminconfig { $host:
-    realm => $realm
+    realm => $realm,
+    require => Anchor['ipa::serverinstall::start']
   }
+
+  anchor { 'ipa::serverinstall::end':
+    require => [Ipa::Flushcache["server-${host}"], Ipa::Adminconfig[$host]]
+  }
+
 }
