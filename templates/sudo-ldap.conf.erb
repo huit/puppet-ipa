@@ -1,4 +1,4 @@
-binddn uid=sudo,cn=sysaccounts,cn=etc,<%= @dc %>
+binddn uid=sudo,cn=sysaccounts,cn=etc,<%= @dc.flatten.join(',') %>
 bindpw <%= @sudopw %>
 
 ssl start_tls
@@ -9,4 +9,4 @@ bind_timelimit 5
 timelimit 15
 
 uri ldap://<%= @masterfqdn %>
-sudoers_base ou=sudoers,<%= @dc %>
+sudoers_base ou=sudoers,<%= @dc.flatten.join(',') %>
