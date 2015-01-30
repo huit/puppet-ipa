@@ -157,6 +157,12 @@ class ipa (
     }
   }
 
+  if $ipa::dns {
+    @package { 'bind-dyndb-ldap':
+      ensure => installed
+    }
+  }
+
   if $ipa::mkhomedir and $::osfamily == 'RedHat' and $::lsbmajdistrelease == '6' {
     service { 'oddjobd':
       ensure => 'running',
