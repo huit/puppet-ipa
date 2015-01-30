@@ -41,8 +41,5 @@ define ipa::cleanup (
 
   cron { 'k5start_admin':
     ensure  => 'absent',
-    command => "/usr/bin/k5start -f ${::ipa_adminhomedir}/admin.keytab -U -o admin -k /tmp/krb5cc_${::ipa_adminuidnumber} > /dev/null 2>&1",
-    user    => 'root',
-    minute  => '*/1'
   } <- notify { 'Running IPA install cleanup, please wait.': }
 }

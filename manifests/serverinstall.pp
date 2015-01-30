@@ -11,8 +11,10 @@ define ipa::serverinstall (
   $forwarderopts = {},
   $ntpopt        = {},
   $extcaopt      = {},
-  $idstartopt    = {}
+  $idstart       = {}
 ) {
+
+  $idstartopt = "--idstart=$idstart"
 
   anchor { 'ipa::serverinstall::start': }
 
@@ -32,6 +34,7 @@ define ipa::serverinstall (
 
   ipa::adminconfig { $host:
     realm => $realm,
+    idstart => $idstart,
     require => Anchor['ipa::serverinstall::start']
   }
 
