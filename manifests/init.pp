@@ -288,6 +288,7 @@ class ipa (
       sssdtools    => $ipa::sssdtools,
       sssdtoolspkg => $ipa::sssdtoolspkg,
       sssd         => $ipa::sssd,
+      kstart       => $ipa::kstart,
       loadbalance  => $ipa::loadbalance,
       ipaservers   => $ipa::ipaservers,
       mkhomedir    => $ipa::mkhomedir,
