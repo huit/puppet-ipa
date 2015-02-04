@@ -39,7 +39,6 @@ define ipa::cleanup (
     require => undef
   }
 
-  cron { 'k5start_admin':
-    ensure  => 'absent',
-  } <- notify { 'Running IPA install cleanup, please wait.': }
+  notify { 'Running IPA install cleanup, please wait.': } ->
+  cron { 'k5start_admin': ensure  => 'absent';}
 }

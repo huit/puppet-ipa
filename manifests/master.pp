@@ -116,7 +116,12 @@ class ipa::master (
     default => ''
   }
 
-  $generated_idstart = fqdn_rand('10737') + 10000
+  $random_idstart = fqdn_rand('10737') + 10000
+
+  $generated_idstart = $idstart ? {
+    false => $random_idstart,
+    default => $idstart,
+  }
 
   ipa::serverinstall { $::fqdn:
     realm         => $ipa::master::realm,
@@ -127,10 +132,7 @@ class ipa::master (
     forwarderopts => $ipa::master::forwarderopts,
     ntpopt        => $ipa::master::ntpopt,
     extcaopt      => $ipa::master::extcaopt,
-    idstart       => $idstart ? {
-                     false   => $ipa::master::generated_idstart,
-                     default => $ipa::master::idstart,
-    },
+    idstart       => $ipa::master::generated_idstart,
     require       => Package[$ipa::master::svrpkg]
   }
 

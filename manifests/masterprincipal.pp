@@ -4,14 +4,14 @@ define ipa::masterprincipal (
   $realm   = {}
 ) {
 
-  $principals = suffix(prefix(["${host}"], "host/"), "@${realm}")
+  $principals = suffix(prefix([$host], 'host/'), "@${realm}")
 
   $ensure = $present ? {
     false   => 'absent',
     default => 'present'
   }
 
-  k5login { "/root/.k5login":
+  k5login { '/root/.k5login':
     ensure     => $ensure,
     principals => $principals
   }

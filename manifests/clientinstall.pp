@@ -36,7 +36,7 @@ define ipa::clientinstall (
 
   exec { "client-install-${host}":
     command   => "/bin/echo | ${clientinstallcmd}",
-    unless    => "$searchostldapcmd | /bin/grep ^krbLastPwdChange",
+    unless    => "${searchostldapcmd} | /bin/grep ^krbLastPwdChange",
     timeout   => '0',
     tries     => '60',
     try_sleep => '90',

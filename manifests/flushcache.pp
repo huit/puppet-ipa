@@ -10,7 +10,7 @@ define ipa::flushcache (
   exec { "flushcache-${host}":
     command     => "/bin/bash -c ${flushcmd}",
     returns     => ['0','1','2'],
-    notify      => Service["sssd"],
+    notify      => Service['sssd'],
     refreshonly => true
   }
 }

@@ -25,7 +25,7 @@ class ipa::replica (
   Ipa::Masterreplicationfirewall <<| tag == "ipa-master-replication-firewall-${ipa::replica::domain}" |>>
   Ipa::Masterprincipal <<| tag == "ipa-master-principal-${ipa::replica::domain}" |>>
 
-  if $::osfamily != "RedHat" {
+  if $::osfamily != 'RedHat' {
     fail("Cannot configure an IPA replica server on ${::operatingsystem} operating systems. Must be a RedHat-like operating system.")
   }
 
@@ -34,40 +34,40 @@ class ipa::replica (
   realize Service['ipa']
 
   if $ipa::replica::kstart {
-    realize Package["kstart"]
+    realize Package['kstart']
   }
 
   if $ipa::replica::sssd {
     realize Package['sssd-common']
-    realize Service["sssd"]
+    realize Service['sssd']
   }
 
-  firewall { "101 allow IPA replica TCP services (kerberos,kpasswd,ldap,ldaps)":
+  firewall { '101 allow IPA replica TCP services (kerberos,kpasswd,ldap,ldaps)':
     ensure => 'present',
     action => 'accept',
     proto  => 'tcp',
     dport  => ['88','389','464','636']
   }
 
-  firewall { "102 allow IPA replica UDP services (kerberos,kpasswd,ntp)":
+  firewall { '102 allow IPA replica UDP services (kerberos,kpasswd,ntp)':
     ensure => 'present',
     action => 'accept',
     proto  => 'udp',
     dport  => ['88','123','464']
   }
 
-  ipa::replicainstall { "$::fqdn":
+  ipa::replicainstall { $::fqdn:
     adminpw => $ipa::replica::adminpw,
     dspw    => $ipa::replica::dspw,
     require => Package[$ipa::replica::svrpkg]
   }
 
-  @@ipa::replicareplicationfirewall { "$::fqdn":
+  @@ipa::replicareplicationfirewall { $::fqdn:
     source => $::ipaddress,
     tag    => "ipa-replica-replication-firewall-${ipa::replica::domain}"
   }
 
-  @@ipa::replicaprepare { "$::fqdn":
+  @@ipa::replicaprepare { $::fqdn:
     dspw => $ipa::replica::dspw,
     tag  => "ipa-replica-prepare-${ipa::replica::domain}"
   }
