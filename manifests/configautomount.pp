@@ -18,27 +18,27 @@ define ipa::configautomount (
   augeas { "nsswitch-automount-${host}":
     context => '/files/etc/nsswitch.conf',
     changes => [
-      "set database[. = 'automount'] automount",
-      "set database[. = 'automount']/service[1] files",
-      "set database[. = 'automount']/service[2] ldap"
+      'set database[. = "automount"] automount',
+      'set database[. = "automount"]/service[1] files',
+      'set database[. = "automount"]/service[2] ldap',
     ]
   }
 
   augeas { "sysconfig-autofs-${name}":
-    context => "$autofspath",
+    context => $autofspath,
     changes => [
-      "set MAP_OBJECT_CLASS automountMap",
-      "set ENTRY_OBJECT_CLASS automount",
-      "set MAP_ATTRIBUTE automountMapName",
-      "set ENTRY_ATTRIBUTE automountKey",
-      "set VALUE_ATTRIBUTE automountInformation",
+      'set MAP_OBJECT_CLASS automountMap',
+      'set ENTRY_OBJECT_CLASS automount',
+      'set MAP_ATTRIBUTE automountMapName',
+      'set ENTRY_ATTRIBUTE automountKey',
+      'set VALUE_ATTRIBUTE automountInformation',
       "set LDAP_URI ldap://${masterfqdn}",
       "set SEARCH_BASE cn=default,cn=automount,${dc}"
     ]
   }
 
   file { "autofs_ldap_auth-${host}":
-    path    => "/etc/autofs_ldap_auth.conf",
+    path    => '/etc/autofs_ldap_auth.conf',
     owner   => 'root',
     group   => 'root',
     mode    => '0600',

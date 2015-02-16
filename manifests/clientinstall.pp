@@ -32,10 +32,11 @@ define ipa::clientinstall (
 
   $clientinstallcmd = shellquote('/usr/sbin/ipa-client-install',"--server=${masterfqdn}","--hostname=${host}","--domain=${domain}","--realm=${realm}","--password=${otp}",$mkhomediropt,$ntpopt,$fixedprimaryopt,'--unattended')
   $dc = prefix([regsubst($domain,'(\.)',',dc=','G')],'dc=')
+  $searchostldapcmd = shellquote('/usr/bin/k5start','-u',"host/${host}",'-f','/etc/krb5.keytab','--','/usr/bin/ldapsearch','-Y','GSSAPI','-H',"ldap://${masterfqdn}",'-b',$dc,"fqdn=${host}")
 
   exec { "client-install-${host}":
     command   => "/bin/echo | ${clientinstallcmd}",
-    unless    => shellquote('/bin/bash','-c',"LDAPTLS_REQCERT=never /usr/bin/ldapsearch -LLL -x -H ldaps://${masterfqdn} -D uid=admin,cn=users,cn=accounts,${dc} -b ${dc} -w ${adminpw} fqdn=${host} | /bin/grep ^krbLastPwdChange"),
+    unless    => "${searchostldapcmd} | /bin/grep ^krbLastPwdChange",
     timeout   => '0',
     tries     => '60',
     try_sleep => '90',

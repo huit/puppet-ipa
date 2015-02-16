@@ -17,6 +17,7 @@ class ipa::client (
   $sssdtools     = {},
   $sssdtoolspkg  = {},
   $sssd          = {},
+  $kstart        = true,
   $client        = {},
   $domain        = {},
   $realm         = {},
@@ -35,6 +36,11 @@ class ipa::client (
   $location      = {}
 ) {
 
+  if $ipa::client::kstart {
+    Package['kstart'] -> Ipa::Clientinstall<||>
+    realize Package['kstart']
+  }
+
   Ipa::Clientinstall <<| |>> {
     name         => $::fqdn,
     otp          => $ipa::client::otp,
@@ -42,7 +48,7 @@ class ipa::client (
     mkhomedir    => $ipa::client::mkhomedir,
     ntp          => $ipa::client::ntp,
     fixedprimary => $ipa::client::fixedprimary,
-    require      => Package[$ipa::client::clntpkg]
+    require      => Package[$ipa::client::clntpkg],
   }
 
   if $ipa::client::sudo {
@@ -84,6 +90,7 @@ class ipa::client (
   }
 
   if $ipa::client::sssd {
+    Ipa::Clientinstall<||> -> Service['sssd']
     realize Package['sssd-common']
     realize Service['sssd']
   }

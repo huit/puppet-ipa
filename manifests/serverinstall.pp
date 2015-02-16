@@ -11,13 +11,15 @@ define ipa::serverinstall (
   $forwarderopts = {},
   $ntpopt        = {},
   $extcaopt      = {},
-  $idstartopt    = {}
+  $idstart       = {}
 ) {
+
+  $idstartopt = "--idstart=${idstart}"
 
   anchor { 'ipa::serverinstall::start': }
 
   exec { "serverinstall-${host}":
-    command   => "/usr/sbin/ipa-server-install --hostname=${host} --realm=${realm} --domain=${domain} --admin-password=${adminpw} --ds-password=${dspw} $dnsopt $forwarderopts $ntpopt $extcaopt $idstartopt --unattended",
+    command   => "/usr/sbin/ipa-server-install --hostname=${host} --realm=${realm} --domain=${domain} --admin-password=${adminpw} --ds-password=${dspw} ${dnsopt} ${forwarderopts} ${ntpopt} ${extcaopt} ${idstartopt} --unattended",
     timeout   => '0',
     unless    => '/usr/sbin/ipactl status >/dev/null 2>&1',
     creates   => '/etc/ipa/default.conf',
@@ -31,7 +33,8 @@ define ipa::serverinstall (
   }
 
   ipa::adminconfig { $host:
-    realm => $realm,
+    realm   => $realm,
+    idstart => $idstart,
     require => Anchor['ipa::serverinstall::start']
   }
 
