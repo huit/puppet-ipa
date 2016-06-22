@@ -12,6 +12,7 @@
 #
 class ipa::master (
   $svrpkg        = {},
+  $svrdnspkg     = {},
   $dns           = {},
   $forwarders    = [],
   $realm         = {},
@@ -79,8 +80,13 @@ class ipa::master (
   if $::osfamily != 'RedHat' {
     fail("Cannot configure an IPA master server on ${::operatingsystem} operating systems. Must be a RedHat-like operating system.")
   }
+  if $dns == true {
+    $pkglist=[$ipa::master::svrdnspkg,$ipa::master::svrpkg]
+  } else {
+    $pkglist=$ipa::master::svrpkg
+  }
 
-  realize Package[$ipa::master::svrpkg]
+  realize Package[$pkglist]
 
   if $ipa::master::sssd {
     realize Package['sssd-common']
@@ -133,7 +139,7 @@ class ipa::master (
     ntpopt        => $ipa::master::ntpopt,
     extcaopt      => $ipa::master::extcaopt,
     idstart       => $ipa::master::generated_idstart,
-    require       => Package[$ipa::master::svrpkg]
+    require       => Package[$pkglist],
   }
 
   if $extca {
