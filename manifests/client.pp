@@ -91,7 +91,9 @@ class ipa::client (
 
   if $ipa::client::sssd {
     Ipa::Clientinstall<||> -> Service['sssd']
-    realize Package['sssd-common']
+    if ($::operatingsystem == 'Ubuntu' and $::lsbmajdistrelease != '12.04') {
+      realize Package['sssd-common']
+    }
     realize Service['sssd']
   }
 

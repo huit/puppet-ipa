@@ -156,14 +156,19 @@ class ipa (
   }
 
   if $ipa::sssd {
-    @package { 'sssd-common':
-      ensure => installed
+    if ($::operatingsystem == 'Ubuntu' and $::lsbmajdistrelease == '12.04') {
+      $sssd_package='sssd'
+    } else {
+      $sssd_package='sssd-common'
     }
 
+    @package { $sssd_package:
+      ensure => present
+    }
     @service { 'sssd':
       ensure  => 'running',
       enable  => true,
-      require => Package['sssd-common']
+      require => Package[$sssd_package],
     }
   }
 
