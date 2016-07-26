@@ -162,13 +162,14 @@ class ipa (
       $sssd_package='sssd-common'
     }
 
-    @package { $sssd_package:
+    @package { 'sssd-package':
+      name   => $sssd_package,
       ensure => present
     }
     @service { 'sssd':
       ensure  => 'running',
       enable  => true,
-      require => Package[$sssd_package],
+      require => Package['sssd-package'],
     }
   }
 
