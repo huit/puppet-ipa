@@ -1,4 +1,4 @@
-\# Class: ipa::replica
+# Class: ipa::replica
 #
 # This class configures an IPA replica
 #
