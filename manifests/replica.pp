@@ -1,4 +1,4 @@
-# Class: ipa::replica
+\# Class: ipa::replica
 #
 # This class configures an IPA replica
 #
@@ -17,9 +17,10 @@ class ipa::replica (
   $domain      = {},
   $kstart      = {},
   $sssd        = {}
+  $fqdn        = "${role}-${region}-${environment}.${domain}"
 ) {
 
-  Class['ipa::client'] -> Ipa::Masterprincipal <<| tag == "ipa-master-principal-${ipa::replica::domain}" |>> -> Ipa::Replicapreparefirewall <<| tag == "ipa-replica-prepare-firewall-${ipa::replica::domain}" |>> -> Ipa::Masterreplicationfirewall <<| tag == "ipa-master-replication-firewall-${ipa::replica::domain}" |>> -> Ipa::Replicainstall[$::fqdn] -> Service['ipa']
+  Class['ipa::client'] -> Ipa::Masterprincipal <<| tag == "ipa-master-principal-${ipa::replica::domain}" |>> -> Ipa::Replicapreparefirewall <<| tag == "ipa-replica-prepare-firewall-${ipa::replica::domain}" |>> -> Ipa::Masterreplicationfirewall <<| tag == "ipa-master-replication-firewall-${ipa::replica::domain}" |>> -> Ipa::Replicainstall[$ipa::master::fqdn] -> Service['ipa']
 
   Ipa::Replicapreparefirewall <<| tag == "ipa-replica-prepare-firewall-${ipa::replica::domain}" |>>
   Ipa::Masterreplicationfirewall <<| tag == "ipa-master-replication-firewall-${ipa::replica::domain}" |>>
@@ -56,18 +57,18 @@ class ipa::replica (
     dport  => ['88','123','464']
   }
 
-  ipa::replicainstall { $::fqdn:
+  ipa::replicainstall { $ipa::master::fqdn:
     adminpw => $ipa::replica::adminpw,
     dspw    => $ipa::replica::dspw,
     require => Package[$ipa::replica::svrpkg]
   }
 
-  @@ipa::replicareplicationfirewall { $::fqdn:
+  @@ipa::replicareplicationfirewall { $ipa::master::fqdn:
     source => $::ipaddress,
     tag    => "ipa-replica-replication-firewall-${ipa::replica::domain}"
   }
 
-  @@ipa::replicaprepare { $::fqdn:
+  @@ipa::replicaprepare { $ipa::master::fqdn:
     dspw => $ipa::replica::dspw,
     tag  => "ipa-replica-prepare-${ipa::replica::domain}"
   }

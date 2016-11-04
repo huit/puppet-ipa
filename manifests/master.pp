@@ -38,10 +38,11 @@ class ipa::master (
   $http_pin      = {},
   $subject       = {},
   $selfsign      = {},
-  $idstart       = {}
+  $idstart       = {},
+  $fqdn          = "${role}-${region}-${environment}.${domain}"
 ) {
 
-  Ipa::Serverinstall[$::fqdn] ->  File['/etc/ipa/primary'] -> Ipa::Hostadd <<| |>> -> Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>> -> Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>> -> Ipa::Createreplicas[$::fqdn]
+  Ipa::Serverinstall[$ipa::master::fqdn] ->  File['/etc/ipa/primary'] -> Ipa::Hostadd <<| |>> -> Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>> -> Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>> -> Ipa::Createreplicas[$ipa::master::fqdn]
 
   Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>>
   Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>>
@@ -54,9 +55,9 @@ class ipa::master (
 
   if $ipa::master::sudo {
     Ipa::Configsudo <<| |>> {
-      name    => $::fqdn,
+      name    => $ipa::master::fqdn,
       os      => "${::osfamily}${::lsbmajdistrelease}",
-      require => Ipa::Serverinstall[$::fqdn]
+      require => Ipa::Serverinstall[$ipa::master::fqdn]
     }
   }
 
@@ -67,14 +68,14 @@ class ipa::master (
     }
 
     Ipa::Configautomount <<| |>> {
-      name    => $::fqdn,
+      name    => $ipa::master::fqdn,
       os      => $::osfamily,
       notify  => Service['autofs'],
-      require => Ipa::Serverinstall[$::fqdn]
+      require => Ipa::Serverinstall[$ipa::master::fqdn]
     }
   }
 
-  $principals = suffix(prefix([$::fqdn], 'host/'), "@${ipa::master::realm}")
+  $principals = suffix(prefix([$ipa::master::fqdn], 'host/'), "@${ipa::master::realm}")
 
   if $::osfamily != 'RedHat' {
     fail("Cannot configure an IPA master server on ${::operatingsystem} operating systems. Must be a RedHat-like operating system.")
@@ -123,7 +124,7 @@ class ipa::master (
     default => $idstart,
   }
 
-  ipa::serverinstall { $::fqdn:
+  ipa::serverinstall { $ipa::master::fqdn:
     realm         => $ipa::master::realm,
     domain        => $ipa::master::domain,
     adminpw       => $ipa::master::adminpw,
@@ -148,15 +149,15 @@ class ipa::master (
       http_pin      => $ipa::master::http_pin,
       subject       => $ipa::master::subject,
       selfsign      => $ipa::master::selfsign,
-      require       => Ipa::Serverinstall[$::fqdn]
+      require       => Ipa::Serverinstall[$ipa::master::fqdn]
     }
   } else {
     class { 'ipa::service':
-      require => Ipa::Serverinstall[$::fqdn]
+      require => Ipa::Serverinstall[$ipa::master::fqdn]
     }
   }
 
-  ipa::createreplicas { $::fqdn:
+  ipa::createreplicas { $ipa::master::fqdn:
   }
 
   firewall { '101 allow IPA master TCP services (http,https,kerberos,kpasswd,ldap,ldaps)':
@@ -173,23 +174,23 @@ class ipa::master (
     dport  => ['88','123','464']
   }
 
-  @@ipa::replicapreparefirewall { $::fqdn:
+  @@ipa::replicapreparefirewall { $ipa::master::fqdn:
     source => $::ipaddress,
     tag    => "ipa-replica-prepare-firewall-${ipa::master::domain}"
   }
 
-  @@ipa::masterreplicationfirewall { $::fqdn:
+  @@ipa::masterreplicationfirewall { $ipa::master::fqdn:
     source => $::ipaddress,
     tag    => "ipa-master-replication-firewall-${ipa::master::domain}"
   }
 
-  @@ipa::masterprincipal { $::fqdn:
+  @@ipa::masterprincipal { $ipa::master::fqdn:
     realm => $ipa::master::realm,
     tag   => "ipa-master-principal-${ipa::master::domain}"
   }
 
-  @@ipa::clientinstall { $::fqdn:
-    masterfqdn => $::fqdn,
+  @@ipa::clientinstall { $ipa::master::fqdn:
+    masterfqdn => $ipa::master::fqdn,
     domain     => $ipa::master::domain,
     realm      => $ipa::master::realm,
     adminpw    => $ipa::master::adminpw,
@@ -199,8 +200,8 @@ class ipa::master (
   }
 
   if $ipa::master::sudo {
-    @@ipa::configsudo { $::fqdn:
-      masterfqdn => $::fqdn,
+    @@ipa::configsudo { $ipa::master::fqdn:
+      masterfqdn => $ipa::master::fqdn,
       domain     => $ipa::master::domain,
       adminpw    => $ipa::master::adminpw,
       sudopw     => $ipa::master::sudopw
@@ -208,8 +209,8 @@ class ipa::master (
   }
 
   if $ipa::master::automount {
-    @@ipa::configautomount { $::fqdn:
-      masterfqdn => $::fqdn,
+    @@ipa::configautomount { $ipa::master::fqdn:
+      masterfqdn => $ipa::master::fqdn,
       os         => $::osfamily,
       domain     => $ipa::master::domain,
       realm      => $ipa::master::realm
@@ -221,7 +222,7 @@ class ipa::master (
       domain     => $ipa::master::domain,
       ipaservers => $ipa::master::ipaservers,
       mkhomedir  => $ipa::master::mkhomedir,
-      require    => Ipa::Serverinstall[$::fqdn]
+      require    => Ipa::Serverinstall[$ipa::master::fqdn]
     }
   }
 }
