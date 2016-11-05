@@ -1,5 +1,6 @@
 define ipa::replicapreparefirewall (
-  $host   = $name,
+  $host = freeipa-${region}-management.${::public_dns},
+# $host   = $name,
   $source = {}
 ) {
 

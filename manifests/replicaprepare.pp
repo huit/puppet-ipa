@@ -1,5 +1,6 @@
 define ipa::replicaprepare (
-  $host = $name,
+  $host = freeipa-${region}-management.${::public_dns},
+#  $host = $name,
   $dspw = {}
 ) {
 
@@ -18,13 +19,15 @@ define ipa::replicaprepare (
     timeout => '0'
   }
 
-  exec { "replica-info-scp-${host}":
-    command     => shellquote('/usr/bin/scp','-q','-o','StrictHostKeyChecking=no','-o','GSSAPIAuthentication=yes','-o','ConnectTimeout=5','-o','ServerAliveInterval=2',$file,"root@${host}:${file}"),
-    refreshonly => true,
-    tries       => '60',
-    try_sleep   => '60'
-  }
-
+  exec { "replica-info-upload-${host}":
+    command     => "/bin/aws s3 cp /var/lib/ipa/replica-info-${host}.gpg\
+                    s3://management-hub-${replica1}-s3-credentials/ipa_gpg/"
+    }
+# shellquote('/usr/bin/scp','-q','-o','StrictHostKeyChecking=no','-o','GSSAPIAuthentication=yes','-o','ConnectTimeout=5','-o','ServerAliveInterval=2',$file,"root@${host}:${file}"),
+#    refreshonly => true,
+#    tries       => '60',
+#    try_sleep   => '60'
+#  }
   ipa::hostdelete { $host:
   }
 }
