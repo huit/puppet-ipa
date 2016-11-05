@@ -4,7 +4,7 @@ define ipa::replicaprepare (
   $dspw = {}
 ) {
 
-  Cron['k5start_root'] -> Exec["replicaprepare-${host}"] ~> Exec["replica-info-scp-${host}"] ~> Ipa::Hostdelete[$host]
+  Cron['k5start_root'] -> Exec["replicaprepare-${host}"] ~> Exec["replica-info-upload-${host}"] ~> Ipa::Hostdelete[$host]
 
   $file = "/var/lib/ipa/replica-info-${host}.gpg"
 
