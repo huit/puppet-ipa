@@ -1,5 +1,5 @@
 define ipa::replicareplicationfirewall (
-  $host = freeipa-${region}-management.${::public_dns},
+  $host = "freeipa-${region}-management.${::public_dns}",
 # $host   = $name,
   $source = {}
 ) {
