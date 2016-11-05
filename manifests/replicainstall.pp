@@ -10,8 +10,7 @@ define ipa::replicainstall (
 
   $file = "/var/lib/ipa/replica-info-${host}.gpg"
   exec { "download gpg":
-    command => "/bin/aws s3 cp s3://management-hub-${region}-s3-credentials/ipa_gpg/replica-info-freeipa\
-               -${region}-management.${::public_dns}.gpg /var/lib/ipa/",
+    command => "/bin/aws s3 cp s3://management-hub-${region}-s3-credentials/ipa_gpg/replica-info-freeipa-${region}-management.${::public_dns}.gpg /var/lib/ipa/",
     }
 
   Exec['download gpg'] ~>  Exec["replicainfocheck-${host}"] ~> Exec["clientuninstall-${host}"] ~> Exec["replicainstall-${host}"] ~> Exec["removereplicainfo-${host}"]

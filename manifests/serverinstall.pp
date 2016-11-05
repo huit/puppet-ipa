@@ -42,4 +42,11 @@ define ipa::serverinstall (
     require => [Ipa::Flushcache["server-${host}"], Ipa::Adminconfig[$host]]
   }
 
+  ::ipa::replicaprepare { 'replicaprepare':
+    replica1_region => $replica1_region,
+    replica2_region => $replica2_region,
+    adminpw         => $adminpw,
+    dspw            => $dspw,
+    require         => Anchor['ipa::serverinstall::end']
+  }
 }
