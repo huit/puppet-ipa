@@ -44,20 +44,14 @@ define ipa::replicaprepare (
   realize Cron['k5start_root']
 
   exec { "replicaprepare-${replica2_host}":
-    command => "${replica2preparecmd} ${replica2_host}",
+    command => "${replicapreparecmd} ${replica2_host}",
     unless  => "${replicamanagecmd} list | /bin/grep ${replica2_host} >/dev/null 2>&1",
     timeout => '0'
   }
 
   exec { "replica-info-upload-${replica2_host}":
-    command     => "/bin/aws s3 cp ${replica2_file} s3://management-hub-${replica1_region}-s3-credentials/ipa_gpg/"
+    command     => "/bin/aws s3 cp ${replica2_file} s3://management-hub-${replica2_region}-s3-credentials/ipa_gpg/"
     }
   ipa::hostdelete { $replica2_host:
   }
-
-
-
-
-
-
 }
