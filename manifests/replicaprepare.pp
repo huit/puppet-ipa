@@ -13,7 +13,7 @@ define ipa::replicaprepare (
 
   Cron['k5start_root'] -> Exec["replicaprepare-${replica1_host}"] ~> Exec["replica-info-upload-${replica1_host}"] ~> Ipa::Hostdelete[$replica1_host]
 
-  $file = "/var/lib/ipa/replica-info-${replica1_host}.gpg"
+  $replica1_file = "/var/lib/ipa/replica-info-${replica1_host}.gpg"
 
   realize Cron['k5start_root']
 
@@ -27,7 +27,7 @@ define ipa::replicaprepare (
   }
 
   exec { "replica-info-upload-${replica1_host}":
-    command     => "/bin/aws s3 cp /var/lib/ipa/replica-info-${replica1_host}.gpg s3://management-hub-${replica1_region}-s3-credentials/ipa_gpg/"
+    command     => "/bin/aws s3 cp ${replica1_file} s3://management-hub-${replica1_region}-s3-credentials/ipa_gpg/"
     }
   ipa::hostdelete { $replica1_host:
   }
@@ -39,7 +39,7 @@ define ipa::replicaprepare (
 
   Cron['k5start_root'] -> Exec["replicaprepare-${replica2_host}"] ~> Exec["replica-info-upload-${replica2_host}"] ~> Ipa::Hostdelete[$replica2_host]
 
-  $file = "/var/lib/ipa/replica-info-${replica2_host}.gpg"
+  $replica2_file = "/var/lib/ipa/replica-info-${replica2_host}.gpg"
 
   realize Cron['k5start_root']
 
@@ -53,7 +53,7 @@ define ipa::replicaprepare (
   }
 
   exec { "replica-info-upload-${replica2_host}":
-    command     => "/bin/aws s3 cp /var/lib/ipa/replica-info-${replica2_host}.gpg s3://management-hub-${replica1_region}-s3-credentials/ipa_gpg/"
+    command     => "/bin/aws s3 cp ${replica2_file} s3://management-hub-${replica1_region}-s3-credentials/ipa_gpg/"
     }
   ipa::hostdelete { $replica2_host:
   }
