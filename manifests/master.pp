@@ -11,6 +11,9 @@
 # Sample Usage:
 #
 class ipa::master (
+  $master_region,
+  $replica1_region,
+  $replica2_region,
   $svrpkg        = {},
   $dns           = {},
   $forwarders    = [],
@@ -125,16 +128,19 @@ class ipa::master (
   }
 
   ipa::serverinstall { $ipa::master::fqdn:
-    realm         => $ipa::master::realm,
-    domain        => $ipa::master::domain,
-    adminpw       => $ipa::master::adminpw,
-    dspw          => $ipa::master::dspw,
-    dnsopt        => $ipa::master::dnsopt,
-    forwarderopts => $ipa::master::forwarderopts,
-    ntpopt        => $ipa::master::ntpopt,
-    extcaopt      => $ipa::master::extcaopt,
-    idstart       => $ipa::master::generated_idstart,
-    require       => Package[$ipa::master::svrpkg]
+    realm           => $ipa::master::realm,
+    domain          => $ipa::master::domain,
+    adminpw         => $ipa::master::adminpw,
+    dspw            => $ipa::master::dspw,
+    dnsopt          => $ipa::master::dnsopt,
+    forwarderopts   => $ipa::master::forwarderopts,
+    ntpopt          => $ipa::master::ntpopt,
+    extcaopt        => $ipa::master::extcaopt,
+    idstart         => $ipa::master::generated_idstart,
+    require         => Package[$ipa::master::svrpkg],
+    master_region   => $profile::freeipa::master_region,
+    replica1_region => $profile::freeipa::replica1_region,
+    replica2_region => $profile::freeipa::replica2_region
   }
 
   if $extca {

@@ -1,5 +1,5 @@
 define ipa::replicaprepare (
-  $replica1_region,
+#  $replica1_region,
   $adminpw,
   $host = "freeipa-${replica1_region}-management.${::public_dns}",
 #  $host = $name,
