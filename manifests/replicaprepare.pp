@@ -31,27 +31,27 @@ define ipa::replicaprepare (
     }
   ipa::hostdelete { $replica1_host:
   }
-
-
-
-
-  notify { "replica region is ${replica2_region}": }
-
-  Cron['k5start_root'] -> Exec["replicaprepare-${replica2_host}"] ~> Exec["replica-info-upload-${replica2_host}"] ~> Ipa::Hostdelete[$replica2_host]
-
-  $replica2_file = "/var/lib/ipa/replica-info-${replica2_host}.gpg"
-
-  realize Cron['k5start_root']
-
-  exec { "replicaprepare-${replica2_host}":
-    command => "${replicapreparecmd} ${replica2_host}",
-    unless  => "${replicamanagecmd} list | /bin/grep ${replica2_host} >/dev/null 2>&1",
-    timeout => '0'
-  }
-
-  exec { "replica-info-upload-${replica2_host}":
-    command     => "/bin/aws s3 cp ${replica2_file} s3://management-hub-${replica2_region}-s3-credentials/ipa_gpg/"
-    }
-  ipa::hostdelete { $replica2_host:
-  }
 }
+
+
+#### Replica 2
+#  notify { "replica region is ${replica2_region}": }
+
+#  Cron['k5start_root'] -> Exec["replicaprepare-${replica2_host}"] ~> Exec["replica-info-upload-${replica2_host}"] ~> Ipa::Hostdelete[$replica2_host]
+
+#  $replica2_file = "/var/lib/ipa/replica-info-${replica2_host}.gpg"
+
+#  realize Cron['k5start_root']
+
+#  exec { "replicaprepare-${replica2_host}":
+#    command => "${replicapreparecmd} ${replica2_host}",
+#    unless  => "${replicamanagecmd} list | /bin/grep ${replica2_host} >/dev/null 2>&1",
+#    timeout => '0'
+#  }
+
+#  exec { "replica-info-upload-${replica2_host}":
+#    command     => "/bin/aws s3 cp ${replica2_file} s3://management-hub-${replica2_region}-s3-credentials/ipa_gpg/"
+#    }
+#  ipa::hostdelete { $replica2_host:
+#  }
+#}
