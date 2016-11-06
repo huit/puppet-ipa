@@ -3,6 +3,9 @@
 # Installs an IPA server
 define ipa::serverinstall (
   $host          = $name,
+  $master_region,
+  $replica1_region,
+  $replica2_region,
   $realm         = {},
   $domain        = {},
   $adminpw       = {},
@@ -43,6 +46,7 @@ define ipa::serverinstall (
   }
 
   ::ipa::replicaprepare { 'replicaprepare':
+    master_region   => $master_region,
     replica1_region => $replica1_region,
     replica2_region => $replica2_region,
     adminpw         => $adminpw,
