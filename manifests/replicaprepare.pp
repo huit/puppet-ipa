@@ -43,11 +43,8 @@ define ipa::replicaprepare (
 
   realize Cron['k5start_root']
 
-  $replicapreparecmd = shellquote('/usr/sbin/ipa-replica-prepare',"--password=${dspw}")
-  $replicamanagecmd = shellquote('/usr/sbin/ipa-replica-manage',"--password=${dspw}")
-
   exec { "replicaprepare-${replica2_host}":
-    command => "${replicapreparecmd} ${replica2_host}",
+    command => "${replica2preparecmd} ${replica2_host}",
     unless  => "${replicamanagecmd} list | /bin/grep ${replica2_host} >/dev/null 2>&1",
     timeout => '0'
   }
