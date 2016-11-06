@@ -232,9 +232,6 @@ class ipa (
 
   if $ipa::master {
     class { 'ipa::master':
-      master_region   => $profile::freeipa::master_region,
-      replica1_region => $profile::freeipa::replica1_region,
-      replica2_region => $profile::freeipa::replica2_region,
       svrpkg          => $ipa::svrpkg,
       dns             => $ipa::dns,
       forwarders      => $ipa::forwarders,

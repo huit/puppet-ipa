@@ -1,10 +1,13 @@
 define ipa::replicaprepare (
-#  $replica1_region,
+  $replica1_region = $profile::freeipa::replica1_region,
+  $replica2_region = $profile::freeipa::replica1_region,
   $adminpw,
-  $host = "freeipa-${replica1_region}-management.${::public_dns}",
-#  $host = $name,
+# $host = $name,
+  $host = "freeipa-${profile::freeipa::replica1_region}-management.${::public_dns}",
   $dspw
 ) {
+
+  notify { "replica1_region is ${replica1_region}": }
 
   Cron['k5start_root'] -> Exec["replicaprepare-${host}"] ~> Exec["replica-info-upload-${host}"] ~> Ipa::Hostdelete[$host]
 
@@ -24,11 +27,6 @@ define ipa::replicaprepare (
   exec { "replica-info-upload-${host}":
     command     => "/bin/aws s3 cp /var/lib/ipa/replica-info-${host}.gpg s3://management-hub-${replica1_region}-s3-credentials/ipa_gpg/"
     }
-# shellquote('/usr/bin/scp','-q','-o','StrictHostKeyChecking=no','-o','GSSAPIAuthentication=yes','-o','ConnectTimeout=5','-o','ServerAliveInterval=2',$file,"root@${host}:${file}"),
-#    refreshonly => true,
-#    tries       => '60',
-#    try_sleep   => '60'
-#  }
   ipa::hostdelete { $host:
   }
 }

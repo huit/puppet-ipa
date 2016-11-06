@@ -11,9 +11,6 @@
 # Sample Usage:
 #
 class ipa::master (
-  $master_region,
-  $replica1_region,
-  $replica2_region,
   $svrpkg        = {},
   $dns           = {},
   $forwarders    = [],
@@ -138,9 +135,6 @@ class ipa::master (
     extcaopt        => $ipa::master::extcaopt,
     idstart         => $ipa::master::generated_idstart,
     require         => Package[$ipa::master::svrpkg],
-    master_region   => $profile::freeipa::master_region,
-    replica1_region => $profile::freeipa::replica1_region,
-    replica2_region => $profile::freeipa::replica2_region
   }
 
   if $extca {
