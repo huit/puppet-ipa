@@ -17,7 +17,7 @@ define ipa::replicaprepare (
 
   realize Cron['k5start_root']
 
-  $replicapreparecmd = shellquote('/usr/sbin/ipa-replica-prepare',"--password=${dspw}")
+  $replicapreparecmd = shellquote('/usr/sbin/ipa-replica-prepare',"--password=${dspw}",'--no-wait-for-dns')
   $replicamanagecmd = shellquote('/usr/sbin/ipa-replica-manage',"--password=${dspw}")
 
   exec { "replicaprepare-${replica1_host}":
