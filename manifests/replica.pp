@@ -74,7 +74,7 @@ class ipa::replica (
 
   @@ipa::replicaprepare { $ipa::replica::fqdn:
     dspw            => $ipa::replica::dspw,
-    tag             => "ipa-replica-prepare-${ipa::replica::domain}"
+    tag             => "ipa-replica-prepare-${ipa::replica::domain}",
     master_region   => $profile::freeipa::master_region,
     replica1_region => $profile::freeipa::replica1_region,
     replica2_region => $profile::freeipa::replica2_region
