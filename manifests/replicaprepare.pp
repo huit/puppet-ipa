@@ -1,9 +1,9 @@
 define ipa::replicaprepare (
   $replica1_region = $profile::freeipa::replica1_region,
-  $replica2_region = $profile::freeipa::replica1_region,
+  $replica2_region = $profile::freeipa::replica2_region,
   $adminpw,
-  $replica1_host = "freeipa-${profile::freeipa::replica1_region}-management.${::public_dns}"
-  $replica2_host = "freeipa-${profile::freeipa::replica2_region}-management.${::public_dns}"
+  $replica1_host = "freeipa-${profile::freeipa::replica1_region}-management.${::public_dns}",
+  $replica2_host = "freeipa-${profile::freeipa::replica2_region}-management.${::public_dns}",
 # $host = $name,
 #  $host = "freeipa-${profile::freeipa::replica1_region}-management.${::public_dns}",
   $dspw
