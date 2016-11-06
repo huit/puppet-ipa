@@ -60,11 +60,7 @@ class ipa::replica (
   ipa::replicainstall { $ipa::replica::fqdn:
     adminpw         => $ipa::replica::adminpw,
     dspw            => $ipa::replica::dspw,
-    require         => Package[$ipa::replica::svrpkg],
-    master_region   => $profile::freeipa::master_region,
-    replica1_region => $profile::freeipa::replica1_region,
-    replica2_region => $profile::freeipa::replica2_region
-
+    require         => Package[$ipa::replica::svrpkg]
   }
 
   @@ipa::replicareplicationfirewall { $ipa::replica::fqdn:
@@ -74,9 +70,6 @@ class ipa::replica (
 
   @@ipa::replicaprepare { $ipa::replica::fqdn:
     dspw            => $ipa::replica::dspw,
-    tag             => "ipa-replica-prepare-${ipa::replica::domain}",
-    master_region   => $profile::freeipa::master_region,
-    replica1_region => $profile::freeipa::replica1_region,
-    replica2_region => $profile::freeipa::replica2_region
+    tag             => "ipa-replica-prepare-${ipa::replica::domain}"
   }
 }
