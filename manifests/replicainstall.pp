@@ -24,7 +24,7 @@ define ipa::replicainstall (
 
   exec { "clientuninstall-${host}":
     command     => '/usr/sbin/ipa-client-install --uninstall --unattended',
-    onlyif      => '/usr/sbin/ipactl status >/dev/null 2>&1'
+    onlyif      => '/usr/sbin/ipactl status >/dev/null 2>&1',
     refreshonly => true
   }
 
@@ -32,7 +32,7 @@ define ipa::replicainstall (
     command     => "/usr/sbin/ipa-replica-install --admin-password=${adminpw} --password=${dspw} --skip-conncheck --unattended ${file}",
     timeout     => '0',
     logoutput   => 'on_failure',
-    refreshonly => true,
+    refreshonly => true
   }
 
   exec { "removereplicainfo-${host}":
