@@ -48,7 +48,7 @@ define ipa::serverinstall (
     require         => Anchor['ipa::serverinstall::end']
   }
 
-  exec { 'enable user home directories',
+  exec { 'enable user home directories':
     command => 'authconfig --enablemkhomedir --update',
     require => Anchor['ipa::serverinstall::end']
   }
