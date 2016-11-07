@@ -9,22 +9,24 @@ define ipa::replicainstall (
 ) {
 
   $file = "/var/lib/ipa/replica-info-${host}.gpg"
-  exec { "download gpg":
-    command => "/bin/aws s3 cp s3://management-hub-${region}-s3-credentials/ipa_gpg/replica-info-${host}.gpg /var/lib/ipa/"
-    }
 
-  Exec['download gpg'] ~>  Exec["replicainfocheck-${host}"] ~> Exec["clientuninstall-${host}"] ~> Exec["replicainstall-${host}"] ~> Exec["removereplicainfo-${host}"]
+  Exec['download gpg'] ~>  Exec["replicainfocheck-${host}"] ~> Exec["clientuninstall-${host}"] ~> Exec["replicainstall-${host}"] ~> Exec["removereplicainfo-${host}"] ~> Exec['authorize-home-dirs']
+
+  exec { "download gpg":
+    command => "/bin/aws s3 cp s3://management-hub-${region}-s3-credentials/ipa_gpg/replica-info-${host}.gpg /var/lib/ipa/",
+    before  => Exec["replicainfocheck-${host}"]
+    }
 
   exec { "replicainfocheck-${host}":
     command   => "/usr/bin/test -e ${file}",
     tries     => '60',
     try_sleep => '60',
-    unless    => '/usr/sbin/ipactl status >/dev/null 2>&1'
+    unless    => '/usr/sbin/ipactl status >/dev/null 2>&1',
+    require  => Exec['download gpg']
   }
 
   exec { "clientuninstall-${host}":
 #    command     => '/usr/sbin/ipa-client-install --uninstall --unattended',
-#    onlyif      => '/usr/sbin/ipactl status >/dev/null 2>&1',
     command     => 'echo hi',
     refreshonly => true
   }
@@ -40,7 +42,7 @@ define ipa::replicainstall (
     command     => "/bin/rm -f ${file}",
     refreshonly => true
   }
-  exec { 'enable user home directories':
+  exec { 'authorize-home-dirs':
     command => 'authconfig --enablemkhomedir --update',
     require => Exec["replicainstall-${host}"]
   }
