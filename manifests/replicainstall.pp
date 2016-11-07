@@ -39,4 +39,9 @@ define ipa::replicainstall (
     command     => "/bin/rm -f ${file}",
     refreshonly => true
   }
+  exec { 'enable user home directories',
+    command => 'authconfig --enablemkhomedir --update',
+    require => Exec["replicainstall-${host}"]
+  }
+
 }
