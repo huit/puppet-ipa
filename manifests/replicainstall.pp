@@ -23,8 +23,9 @@ define ipa::replicainstall (
   }
 
   exec { "clientuninstall-${host}":
-    command     => '/usr/sbin/ipa-client-install --uninstall --unattended',
-    onlyif      => '/usr/sbin/ipactl status >/dev/null 2>&1',
+#    command     => '/usr/sbin/ipa-client-install --uninstall --unattended',
+#    onlyif      => '/usr/sbin/ipactl status >/dev/null 2>&1',
+    command     => 'echo hi',
     refreshonly => true
   }
 
