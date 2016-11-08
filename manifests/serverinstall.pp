@@ -21,6 +21,7 @@ define ipa::serverinstall (
   file { '/var/lib/ipa/backup/latest':
     ensure  =>  directory,
     mode    =>  644,
+    before  =>  Exec["serverinstall-${host}"]
   }
 
 
@@ -32,8 +33,7 @@ define ipa::serverinstall (
     }
   } else {
       $install_command = shellquote('/usr/sbin/ipa-server-install',"--hostname=${host}","--realm=${realm}","--domain=${domain}","--admin-password=${adminpw}","--ds-password=${dspw}","${dnsopt}","${forwarderopts}","${ntpopt}","${extcaopt}","${idstartopt}",'--unattended')
-  }
-
+  } ->
   exec { "serverinstall-${host}":
     command   => "${install_command}",
     timeout   => '0',
