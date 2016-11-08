@@ -53,10 +53,19 @@ define ipa::serverinstall (
     require => Anchor['ipa::serverinstall::end']
   }
 
-  exec { "restore from s3 backup":
-    command   => "ipa-restore --password ${admpw} /var/lib/ipa/backup",
-    onlyif    => "aws s3 cp s3://management-hub-${region}-s3-credentials/ipa_backups/ /var/lib/ipa/backup/ --recursive",
-    require => Anchor['ipa::serverinstall::end']
+  if ${::restore} == "true" {
+    exec { "download backup":
+      command => "aws s3 cp s3://management-hub-${region}-s3-credentials/ipa_backups/${restore_dir} /var/lib/ipa/backup/ --recursive",
+      require => Anchor['ipa::serverinstall::end']
+    } ->
+    exec { "restoring from s3 backup":
+      command   => "ipa-restore --password ${admpw} /var/lib/ipa/backup"
+    } -->
+    ::ipa::replicaprepare { 'replicaprepare':
+      adminpw         => $adminpw,
+      dspw            => $dspw,
+      require         => Anchor['ipa::serverinstall::end']
+    }
   }
 
 }
