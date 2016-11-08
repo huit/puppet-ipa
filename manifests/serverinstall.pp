@@ -5,13 +5,13 @@ define ipa::serverinstall (
   $host          = $name,
   $realm         = {},
   $domain        = {},
-  $adminpw	 = {},
+  $adminpw       = {},
   $dspw          = {},
   $dnsopt        = {},
   $forwarderopts = {},
   $ntpopt        = {},
-  $extcaopt	 = {},
-  $idstart	 = {},
+  $extcaopt      = {},
+  $idstart       = {},
 ) {
 
   $idstartopt = "--idstart=${idstart}"
