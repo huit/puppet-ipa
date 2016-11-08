@@ -18,6 +18,11 @@ define ipa::serverinstall (
 
   anchor { 'ipa::serverinstall::start': }
 
+  file { '/var/lib/ipa/backup/latest':
+    ensure  =>  directory,
+    mode    =>  644,
+  }
+
   if $::restore == "true" {
     exec { "download backup":
       command => "aws s3 cp s3://management-hub-${region}-s3-credentials/ipa_backups/${restore_dir}/ /var/lib/ipa/backup/latest/ --recursive"
