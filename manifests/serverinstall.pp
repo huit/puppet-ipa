@@ -60,7 +60,7 @@ define ipa::serverinstall (
     } ->
     exec { "restoring from s3 backup":
       command   => "ipa-restore --password ${admpw} /var/lib/ipa/backup"
-    } -->
+    } ->
     ::ipa::replicaprepare { 'replicaprepare':
       adminpw         => $adminpw,
       dspw            => $dspw,
