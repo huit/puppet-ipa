@@ -37,6 +37,10 @@ define ipa::serverinstall (
       $install_command = shellquote('/usr/sbin/ipa-server-install',"--hostname=${host}","--realm=${realm}","--domain=${domain}","--admin-password=${adminpw}","--ds-password=${dspw}","${dnsopt}","${forwarderopts}","${ntpopt}","${extcaopt}","${idstartopt}",'--unattended')
   }
 
+  notify { "INSTALLING FROM BACKUP (maybe). install_command is ${install_command} and restore is ${restore} and restore_dir is ${restore_dir}":
+    before => Exec["serverinstall-${host}"]
+  }
+
   exec { "serverinstall-${host}":
     command   => "${install_command}",
     timeout   => '0',
