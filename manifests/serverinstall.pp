@@ -48,8 +48,15 @@ define ipa::serverinstall (
     require         => Anchor['ipa::serverinstall::end']
   }
 
-  exec { 'enable user home directories':
+  exec { 'authorize-home-dirs':
     command => 'authconfig --enablemkhomedir --update',
     require => Anchor['ipa::serverinstall::end']
   }
+
+  exec { "restore from s3 backup":
+    command   => "ipa-restore --password ${admpw} /var/lib/ipa/backup",
+    onlyif    => "aws s3 cp s3://management-hub-${region}-s3-credentials/ipa_backups/ /var/lib/ipa/backup/ --recursive",
+    require => Anchor['ipa::serverinstall::end']
+  }
+
 }
