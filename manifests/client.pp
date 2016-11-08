@@ -28,7 +28,7 @@ class ipa::client (
   $otp           = {},
   $ipaservers    = [],
   $loadbalance   = {},
-  $mkhomedir     = false,
+  $mkhomedir     = true,
   $ntp           = false,
   $fixedprimary  = false,
   $desc          = {},
