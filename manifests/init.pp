@@ -61,6 +61,9 @@
 #
 #
 class ipa (
+  $replica1_region = undef,
+  $replica2_region = undef,
+  $master_region   = undef,
   $master          = false,
   $replica         = false,
   $client          = false,
