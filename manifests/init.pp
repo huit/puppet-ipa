@@ -86,7 +86,7 @@ class ipa (
   $selfsign        = false,
   $loadbalance     = false,
   $ipaservers      = [],
-  $mkhomedir       = false,
+  $mkhomedir       = true,
   $ntp             = false,
   $kstart          = true,
   $desc            = '',
