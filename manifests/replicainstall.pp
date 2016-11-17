@@ -2,7 +2,7 @@
 #
 # Installs an IPA replica
 define ipa::replicainstall (
-  $host = "freeipa-${region}-management.${::public_dns}",
+  $host = "freeipa-${::region}.${::public_dns}",
 # $host    = $name,
   $adminpw = {},
   $dspw    = {}
@@ -13,7 +13,7 @@ define ipa::replicainstall (
   Exec['download gpg'] ~>  Exec["replicainfocheck-${host}"] ~> Exec["clientuninstall-${host}"] ~> Exec["replicainstall-${host}"] ~> Exec["removereplicainfo-${host}"] ~> Exec['authorize-home-dirs']
 
   exec { "download gpg":
-    command => "/bin/aws s3 cp s3://management-hub-${region}-s3-credentials/ipa_gpg/replica-info-${host}.gpg /var/lib/ipa/",
+    command => "/bin/aws s3 cp s3://${::environment}-hub-${::region}-s3-credentials/ipa_gpg/replica-info-${host}.gpg /var/lib/ipa/",
     before  => Exec["replicainfocheck-${host}"]
     }
 

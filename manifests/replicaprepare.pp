@@ -1,11 +1,11 @@
 define ipa::replicaprepare (
-  $replica1_region = $profile::freeipa::replica1_region,
-  $replica2_region = $profile::freeipa::replica2_region,
+  $replica1_region,
+  $replica2_region,
   $adminpw,
-  $replica1_host = "freeipa-${profile::freeipa::replica1_region}-management.${::public_dns}",
-  $replica2_host = "freeipa-${profile::freeipa::replica2_region}-management.${::public_dns}",
+  $replica1_host = "freeipa-${replica1_region}.${::public_dns}",
+  $replica2_host = "freeipa-${replica2_region}.${::public_dns}",
 # $host = $name,
-#  $host = "freeipa-${profile::freeipa::replica1_region}-management.${::public_dns}",
+#  $host = "freeipa-${profile::freeipa::replica1_region}.${::public_dns}",
   $dspw
 ) {
 
@@ -27,7 +27,7 @@ define ipa::replicaprepare (
   }
 
   exec { "replica-info-upload-${replica1_host}":
-    command     => "/bin/aws s3 cp ${replica1_file} s3://management-hub-${replica1_region}-s3-credentials/ipa_gpg/"
+    command     => "/bin/aws s3 cp ${replica1_file} s3://${::environment}-hub-${replica1_region}-s3-credentials/ipa_gpg/"
     }
   ipa::hostdelete { $replica1_host:
   }
@@ -50,7 +50,7 @@ define ipa::replicaprepare (
 #  }
 
 #  exec { "replica-info-upload-${replica2_host}":
-#    command     => "/bin/aws s3 cp ${replica2_file} s3://management-hub-${replica2_region}-s3-credentials/ipa_gpg/"
+#    command     => "/bin/aws s3 cp ${replica2_file} s3://${::environment}-hub-${replica2_region}-s3-credentials/ipa_gpg/"
 #    }
 #  ipa::hostdelete { $replica2_host:
 #  }
