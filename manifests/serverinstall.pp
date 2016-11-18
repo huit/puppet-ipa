@@ -65,6 +65,8 @@ define ipa::serverinstall (
   }
 
   ::ipa::replicaprepare { 'replicaprepare':
+    replica1_region => $replica1_region,
+    replica2_region => $replica2_region,
     adminpw         => $adminpw,
     dspw            => $dspw,
     require         => Anchor['ipa::serverinstall::end']
