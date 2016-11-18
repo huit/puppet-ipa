@@ -3,16 +3,16 @@ define ipa::replicaprepare (
   $replica2_region,
   $adminpw,
 # $host = $name,
-#  $host = "freeipa-${profile::freeipa::replica1_region}.${::public_dns}",
+#  $host = "freeipa-replica-1.${::public_dns}",
   $dspw
 ) {
 
 
-  $replica1_host = "freeipa-${replica1_region}.${::public_dns}"
-  $replica2_host = "freeipa-${replica2_region}.${::public_dns}"
+  $replica1_host = "freeipa-replica-1.${::public_dns}"
+  $replica2_host = "freeipa-replica-2.${::public_dns}"
 
 
-  notify { "replica1_region is ${replica1_region}": }
+  notify { "replica1 host set to ${replica1_host}": }
 
   Cron['k5start_root'] -> Exec["replicaprepare-${replica1_host}"] ~> Exec["replica-info-upload-${replica1_host}"] ~> Ipa::Hostdelete[$replica1_host]
 
@@ -23,7 +23,7 @@ define ipa::replicaprepare (
   $replicapreparecmd = shellquote('/usr/sbin/ipa-replica-prepare',"--password=${dspw}",'--no-wait-for-dns')
   $replicamanagecmd = shellquote('/usr/sbin/ipa-replica-manage',"--password=${dspw}")
 
-  exec { "replicaprepare-${replica1_host}":
+  exec { "replicaprepare-${replica1_host}": }
     command => "${replicapreparecmd} ${replica1_host}",
     unless  => "${replicamanagecmd} list | /bin/grep ${replica1_host} >/dev/null 2>&1",
     timeout => '0'

@@ -2,7 +2,7 @@
 #
 # Installs an IPA replica
 define ipa::replicainstall (
-  $host = "freeipa-${::region}.${::public_dns}",
+  $host = "freeipa-replica-1.${::public_dns}",
 # $host    = $name,
   $adminpw = {},
   $dspw    = {}
