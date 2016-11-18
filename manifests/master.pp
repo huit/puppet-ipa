@@ -92,7 +92,7 @@ class ipa::master (
     realize Package['kstart']
   }
 
-  if $ipa::master::dns {
+  if $ipa::master::dns == 'true' {
     if size($ipa::master::forwarders) > 0 {
       $forwarderopts = join(prefix($ipa::master::forwarders, '--forwarder '), ' ')
     }
