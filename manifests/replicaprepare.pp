@@ -2,12 +2,15 @@ define ipa::replicaprepare (
   $replica1_region,
   $replica2_region,
   $adminpw,
-  $replica1_host = "freeipa-${replica1_region}.${::public_dns}",
-  $replica2_host = "freeipa-${replica2_region}.${::public_dns}",
 # $host = $name,
 #  $host = "freeipa-${profile::freeipa::replica1_region}.${::public_dns}",
   $dspw
 ) {
+
+
+  $replica1_host = "freeipa-${replica1_region}.${::public_dns}"
+  $replica2_host = "freeipa-${replica2_region}.${::public_dns}"
+
 
   notify { "replica1_region is ${replica1_region}": }
 
