@@ -39,7 +39,7 @@ class ipa::master (
   $subject       = {},
   $selfsign      = {},
   $idstart       = {},
-  $fqdn          = "${role}-${region}-${environment}.${domain}"
+  $fqdn          = "freeipa-${region}.${domain}"
 ) {
 
   Ipa::Serverinstall[$ipa::master::fqdn] ->  File['/etc/ipa/primary'] -> Ipa::Hostadd <<| |>> -> Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>> -> Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>> -> Ipa::Createreplicas[$ipa::master::fqdn]
