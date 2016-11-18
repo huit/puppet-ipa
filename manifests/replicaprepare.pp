@@ -23,7 +23,7 @@ define ipa::replicaprepare (
   $replicapreparecmd = shellquote('/usr/sbin/ipa-replica-prepare',"--password=${dspw}",'--no-wait-for-dns')
   $replicamanagecmd = shellquote('/usr/sbin/ipa-replica-manage',"--password=${dspw}")
 
-  exec { "replicaprepare-${replica1_host}": }
+  exec { "replicaprepare-${replica1_host}":
     command => "${replicapreparecmd} ${replica1_host}",
     unless  => "${replicamanagecmd} list | /bin/grep ${replica1_host} >/dev/null 2>&1",
     timeout => '0'
