@@ -2,16 +2,18 @@
 #
 # Installs an IPA server
 define ipa::serverinstall (
-  $host          = $name,
-  $realm         = {},
-  $domain        = {},
-  $adminpw       = {},
-  $dspw          = {},
-  $dnsopt        = {},
-  $forwarderopts = {},
-  $ntpopt        = {},
-  $extcaopt      = {},
-  $idstart       = {},
+  $replica1_region = {},
+  $replica2_region = {},
+  $host            = $name,
+  $realm           = {},
+  $domain          = {},
+  $adminpw         = {},
+  $dspw            = {},
+  $dnsopt          = {},
+  $forwarderopts   = {},
+  $ntpopt          = {},
+  $extcaopt        = {},
+  $idstart         = {},
 ) {
 
   $idstartopt = "--idstart=${idstart}"
