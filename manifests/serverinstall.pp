@@ -2,7 +2,7 @@
 #
 # Installs an IPA server
 define ipa::serverinstall (
-  $host            = $title,
+  $host            = $name,
   $realm           = {},
   $domain          = {},
   $adminpw         = {},
@@ -13,6 +13,15 @@ define ipa::serverinstall (
   $extcaopt        = {},
   $idstart         = {},
 ) {
+
+
+#    ipa::replicaprepare{$name:
+#      replica_ip      => $replica['ip'],
+#      replica_region  => $replica['region'],
+#      dspw            => $profile::freeipa::dspw,
+#     require         => Profile::Resources::Attach_eni['eth1'],
+#    }
+
 
   $idstartopt = "--idstart=${idstart}"
 
@@ -64,11 +73,14 @@ define ipa::serverinstall (
     require => [Ipa::Flushcache["server-${host}"], Ipa::Adminconfig[$host]]
   }
 
-  ::ipa::replicaprepare { $host:
-    adminpw         => $adminpw,
-    dspw            => $dspw,
-    require         => Anchor['ipa::serverinstall::end']
-  }
+#  ::ipa::replicaprepare{$name:
+#    adminpw         => $adminpw,
+#    dspw            => $dspw,
+#    replica_ip      => $replica['ip'],
+#    replica_region  => $replica['region'],
+#    dspw            => $profile::freeipa::dspw,
+#    require         => Anchor['ipa::serverinstall::end']
+#  }
 
   exec { 'authorize-home-dirs':
     command => 'authconfig --enablemkhomedir --update',

@@ -1,26 +1,35 @@
 define ipa::replicaprepare (
-  $replica_name = $name,
-  $dspw,
+  $replica_fqdn = $name,
+  $replica_hostname = {},
   $replica_region = {},
   $replica_ip = {},
+  $dspw,
 ) {
 
-  notify { "MEOW REPLICA HOSTNAME, REGION, AND IP ARE: $replica_name $replica_region $replica_ip":}
+  file_line { "add $replica_hostname to hosts":
+    ensure => present,
+    line => "$replica_ip $replica_fqdn $replica_hostname",
+    path => '/etc/hosts'
+  }
 
-  Cron['k5start_root'] ~> Exec["replicaprepare-${replica_name}"] ~> Exec["replica-info-upload-${replica_name}"] ~> Ipa::Hostdelete["${replica_name}"]
+  notify { "MEOW REPLICA FQDN, HOSTNAME, REGION, AND IP ARE: $replica_fqdn $replica_hostname $replica_region $replica_ip":}
+
+  Cron['k5start_root'] -> File_line["add $replica_hostname to hosts"] ~> Exec["replicaprepare-${replica_fqdn}"] ~> Exec["replica-info-upload-${replica_fqdn}"] ~> Ipa::Hostdelete[$replica_fqdn]
+
+#  realize Cron['k5start_root']
 
   $replicapreparecmd = shellquote('/usr/sbin/ipa-replica-prepare',"--password=${dspw}",'--no-wait-for-dns')
   $replicamanagecmd = shellquote('/usr/sbin/ipa-replica-manage',"--password=${dspw}")
 
-  exec { "replicaprepare-${replica_name}":
-    command => "${replicapreparecmd} ${replica_name}",
-    unless  => "${replicamanagecmd} list | /bin/grep ${replica_name} >/dev/null 2>&1",
-    timeout => '0'
+  exec { "replicaprepare-${replica_fqdn}":
+    command => "${replicapreparecmd} ${replica_fqdn}",
+    unless  => "${replicamanagecmd} list | /bin/grep ${replica_fqdn} >/dev/null 2>&1",
+    timeout => '0',
   }
 
-  exec { "replica-info-upload-${replica_name}":
-    command     => "/bin/aws s3 cp /var/lib/ipa/replica-info-${replica_name}.gpg s3://${::environment}-hub-${replica_region}-s3-credentials/ipa_gpg/"
-    }
-  ipa::hostdelete { $replica_name:
+  exec { "replica-info-upload-${replica_fqdn}":
+    command     => "/bin/aws s3 cp /var/lib/ipa/replica-info-${replica_fqdn}.gpg s3://${::environment}-hub-${replica_region}-s3-credentials/ipa_gpg/",
   }
+
+  ipa::hostdelete { $replica_fqdn:}
 }
