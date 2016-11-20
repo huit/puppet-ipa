@@ -22,7 +22,7 @@ define ipa::serverinstall (
 
   file { '/var/lib/ipa/backup/latest':
     ensure  =>  directory,
-    mode    =>  644,
+    mode    =>  0644,
     before  =>  Exec["serverinstall-${host}"]
   }
 
@@ -39,7 +39,7 @@ define ipa::serverinstall (
       $install_command = shellquote('/usr/sbin/ipa-server-install',"--hostname=${host}","--realm=${realm}","--domain=${domain}","--admin-password=${adminpw}","--ds-password=${dspw}","${dnsopt}","${forwarderopts}","${ntpopt}","${extcaopt}","${idstartopt}",'--unattended')
   }
 
-  notify { "## Installing IPA Master. ## Command: ${install_command} ## restore=${restore} restore_dir=${restore_dir}":
+  notify { "Installing IPA Master. Restore option is set to ${restore}, restore directory is set to ${restore_dir}":
     before => Exec["serverinstall-${host}"]
   }
 
@@ -67,8 +67,6 @@ define ipa::serverinstall (
   }
 
   ::ipa::replicaprepare { 'replicaprepare':
-    replica1_region => $replica1_region,
-    replica2_region => $replica2_region,
     adminpw         => $adminpw,
     dspw            => $dspw,
     require         => Anchor['ipa::serverinstall::end']
