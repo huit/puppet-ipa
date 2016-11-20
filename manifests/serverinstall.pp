@@ -2,8 +2,6 @@
 #
 # Installs an IPA server
 define ipa::serverinstall (
-  $replica1_region = {},
-  $replica2_region = {},
   $host            = $name,
   $realm           = {},
   $domain          = {},
