@@ -66,7 +66,7 @@ define ipa::serverinstall (
     require => [Ipa::Flushcache["server-${host}"], Ipa::Adminconfig[$host]]
   }
 
-  ::ipa::replicaprepare { 'replicaprepare':
+  ::ipa::replicaprepare { $host:
     adminpw         => $adminpw,
     dspw            => $dspw,
     require         => Anchor['ipa::serverinstall::end']
