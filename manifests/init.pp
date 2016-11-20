@@ -60,9 +60,22 @@
 # === Copyright
 #
 #
+
+ $data = {
+   ipa_hosts => {
+     'freeipa-replica-1.infra.bitbrew.com' => {
+       host_ip => '52.209.186.125',
+       host_region => 'eu-west-1',
+     },
+     'freeipa-replica-2.infra.bitbrew.com' => {
+       host_ip => '52.212.242.94',
+       host_region => 'us-east-1',
+     }
+   }
+ },
+
+
 class ipa (
-  $replica1_region = undef,
-  $replica2_region = undef,
   $master_region   = undef,
   $master          = false,
   $replica         = false,
