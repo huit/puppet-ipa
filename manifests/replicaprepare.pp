@@ -9,10 +9,6 @@ define ipa::replicaprepare (
 
   Cron['k5start_root'] ~> Exec["replicaprepare-${replica_name}"] ~> Exec["replica-info-upload-${replica_name}"] ~> Ipa::Hostdelete["${replica_name}"]
 
-  $replica1_file = "/var/lib/ipa/replica-info-${replica_name}.gpg"
-
-  realize Cron['k5start_root']
-
   $replicapreparecmd = shellquote('/usr/sbin/ipa-replica-prepare',"--password=${dspw}",'--no-wait-for-dns')
   $replicamanagecmd = shellquote('/usr/sbin/ipa-replica-manage',"--password=${dspw}")
 
@@ -23,7 +19,7 @@ define ipa::replicaprepare (
   }
 
   exec { "replica-info-upload-${replica_name}":
-    command     => "/bin/aws s3 cp /var/lib/ipa/${replica_name} s3://${::environment}-hub-${replica_region}-s3-credentials/ipa_gpg/"
+    command     => "/bin/aws s3 cp /var/lib/ipa/replica-info-${replica_name}.gpg s3://${::environment}-hub-${replica_region}-s3-credentials/ipa_gpg/"
     }
   ipa::hostdelete { $replica_name:
   }

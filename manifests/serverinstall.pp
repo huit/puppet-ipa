@@ -2,7 +2,7 @@
 #
 # Installs an IPA server
 define ipa::serverinstall (
-  $host            = $name,
+  $host            = $title,
   $realm           = {},
   $domain          = {},
   $adminpw         = {},
