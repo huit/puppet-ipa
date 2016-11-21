@@ -14,15 +14,6 @@ define ipa::serverinstall (
   $idstart         = {},
 ) {
 
-
-#    ipa::replicaprepare{$name:
-#      replica_ip      => $replica['ip'],
-#      replica_region  => $replica['region'],
-#      dspw            => $profile::freeipa::dspw,
-#     require         => Profile::Resources::Attach_eni['eth1'],
-#    }
-
-
   $idstartopt = "--idstart=${idstart}"
 
   anchor { 'ipa::serverinstall::start': }

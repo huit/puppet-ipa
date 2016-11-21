@@ -6,15 +6,15 @@ define ipa::replicaprepare (
   $dspw,
 ) {
 
-  file_line { "add $replica_hostname to hosts":
-    ensure => present,
-    line => "$replica_ip $replica_fqdn $replica_hostname",
-    path => '/etc/hosts'
-  }
-
   notify { "MEOW REPLICA FQDN, HOSTNAME, REGION, AND IP ARE: $replica_fqdn $replica_hostname $replica_region $replica_ip":}
 
   Cron['k5start_root'] -> File_line["add $replica_hostname to hosts"] ~> Exec["replicaprepare-${replica_fqdn}"] ~> Exec["replica-info-upload-${replica_fqdn}"] ~> Ipa::Hostdelete[$replica_fqdn]
+
+  file_line { "add $replica_hostname to hosts":
+    ensure  => present,
+    line    => "$replica_ip $replica_fqdn $replica_hostname",
+    path    => '/etc/hosts'
+  }
 
 #  realize Cron['k5start_root']
 

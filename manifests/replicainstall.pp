@@ -8,6 +8,7 @@ define ipa::replicainstall (
   $dspw    = {}
 ) {
 
+
   $file = "/var/lib/ipa/replica-info-${host}.gpg"
 
   Exec['download gpg'] ~>  Exec["replicainfocheck-${host}"] ~> Exec["clientuninstall-${host}"] ~> Exec["replicainstall-${host}"] ~> Exec["removereplicainfo-${host}"] ~> Exec['authorize-home-dirs']
