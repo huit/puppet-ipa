@@ -44,8 +44,8 @@ define ipa::serverinstall (
   exec { "serverinstall-${host}":
     command   => "${install_command}",
     timeout   => '0',
-    unless    => '/usr/sbin/ipactl status >/dev/null 2>&1',
-    creates   => '/etc/ipa/default.conf',
+#    unless    => '/usr/sbin/ipactl status >/dev/null 2>&1',
+#    creates   => '/etc/ipa/default.conf',
     notify    => Ipa::Flushcache["server-${host}"]
   }
 

@@ -27,7 +27,7 @@ define ipa::replicainstall (
     }
 
   exec { "replicainfocheck-${host}":
-    command   => "/usr/bin/test -e ${file}",
+    command   => "/usr/bin/test -e /var/lib/ipa/replica-info-${host}.gpg",
     tries     => '60',
     try_sleep => '60',
     unless    => '/usr/sbin/ipactl status >/dev/null 2>&1',
@@ -48,7 +48,7 @@ define ipa::replicainstall (
   }
 
   exec { "removereplicainfo-${host}":
-    command     => "/bin/rm -f ${file}",
+    command     => "/bin/rm -f /var/lib/ipa/replica-info-${host}.gpg",
     refreshonly => true
   }
   exec { 'authorize-home-dirs':
