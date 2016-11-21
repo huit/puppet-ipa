@@ -8,6 +8,14 @@ define ipa::replicainstall (
   $dspw    = {}
 ) {
 
+  if ("$host" =~ 'replica-1') {
+    notify { "Installing first replica":}
+  } else {
+    exec { "Pause for ${host} replica installation" :
+      command => "sleep 90",
+      before  => Exec['download gpg'],
+    }
+  }
 
   $file = "/var/lib/ipa/replica-info-${host}.gpg"
 
