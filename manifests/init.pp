@@ -95,7 +95,7 @@ class ipa (
   $location        = '',
   $sssdtools       = true,
   $sssdtoolspkg    = 'sssd-tools',
-  $sssd            = true,
+  $sssd            = false,
   $sudo            = false,
   $sudopw          = undef,
   $debiansudopkg   = true,
