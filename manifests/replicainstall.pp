@@ -12,7 +12,7 @@ define ipa::replicainstall (
     notify { "Installing first replica":}
   } else {
     exec { "Pause for ${host} replica installation" :
-      command => "sleep 90",
+      command => "sleep 180",
       before  => Exec['download gpg'],
     }
   }
