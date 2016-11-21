@@ -17,7 +17,8 @@ class ipa::replica (
   $domain      = {},
   $kstart      = {},
   $sssd        = {},
-  $fqdn        = "${role}-${region}.${domain}",
+  $fqdn        = ${::hostname}.${::public_dns}
+#  $fqdn        = "${role}-${region}.${domain}",
 ) {
 
   Class['ipa::client'] -> Ipa::Masterprincipal <<| tag == "ipa-master-principal-${ipa::replica::domain}" |>> -> Ipa::Replicapreparefirewall <<| tag == "ipa-replica-prepare-firewall-${ipa::replica::domain}" |>> -> Ipa::Masterreplicationfirewall <<| tag == "ipa-master-replication-firewall-${ipa::replica::domain}" |>> -> Ipa::Replicainstall[$ipa::replica::fqdn] -> Service['ipa']
