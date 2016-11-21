@@ -17,7 +17,7 @@ class ipa::replica (
   $domain      = {},
   $kstart      = {},
   $sssd        = {},
-  $fqdn        = ${::hostname}.${::public_dns},
+  $fqdn        = "${::hostname}.${::public_dns}",
 #  $fqdn        = "${role}-${region}.${domain}",
 ) {
 
