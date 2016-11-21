@@ -6,6 +6,11 @@ define ipa::replicaprepare (
   $dspw,
 ) {
 
+  exec {"remove ${replica_hostname} from ipa hosts":
+    command => "/usr/bin/ipa host-del ${replica_fqdn} ; $?=0",
+    before  => Exec["replicaprepare-${replica_fqdn}"],
+  }
+
   notify { "MEOW REPLICA FQDN, HOSTNAME, REGION, AND IP ARE: $replica_fqdn $replica_hostname $replica_region $replica_ip":}
 
   Cron['k5start_root'] -> File_line["add $replica_hostname to hosts"] ~> Exec["replicaprepare-${replica_fqdn}"] ~> Exec["replica-info-upload-${replica_fqdn}"] ~> Ipa::Hostdelete[$replica_fqdn]
