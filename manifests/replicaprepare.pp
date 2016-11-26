@@ -9,7 +9,7 @@ define ipa::replicaprepare (
   notify { "REPLICA FQDN, HOSTNAME, REGION, AND IP ARE: $replica_fqdn $replica_hostname $replica_region $replica_ip":}
 
   exec { "remove $replica_hostname":
-    command => "ipa-replica-manage del ${replica_fqdn} --password ${adminpw} --force ; echo true"
+    command => "ipa-replica-manage del ${replica_fqdn} --password ${adminpw} --force ; echo true",
     before  => Cron['k5start_root']
   }
 
