@@ -10,7 +10,7 @@ define ipa::replicaprepare (
 
   exec { "remove $replica_hostname":
     command => "ipa-replica-manage del ${replica_fqdn} --password ${adminpw} --force ; echo true",
-    before  => Cron['k5start_root']
+    before  => File_line["add $replica_hostname to hosts"]
   }
 
   Cron['k5start_root'] -> File_line["add $replica_hostname to hosts"] ~> Exec["replicaprepare-${replica_fqdn}"] ~> Exec["replica-info-upload-${replica_fqdn}"] ~> Ipa::Hostdelete[$replica_fqdn]
