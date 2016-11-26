@@ -3,17 +3,20 @@
 # Installs an IPA client
 define ipa::clientinstall (
   $host         = $name,
-  $masterfqdn   = {},
   $domain       = {},
-  $realm        = {},
-  $adminpw      = {},
+  $realm        = $profile::freeipa::realm,
   $otp          = {},
   $mkhomedir    = {},
   $ntp          = {},
   $fixedprimary = false
 ) {
 
-  Exec["client-install-${host}"] ~> Ipa::Flushcache["client-${host}"]
+  $masterfqdn = "freeipa-master.${domain}"
+
+#  Exec["client-install-${host}"] 
+# ~> Ipa::Flushcache["client-${host}"]
+
+  $principal = upcase("$domain")
 
   $mkhomediropt = $mkhomedir ? {
     true    => '--mkhomedir',
@@ -30,7 +33,7 @@ define ipa::clientinstall (
     default => ''
   }
 
-  $clientinstallcmd = shellquote('/usr/sbin/ipa-client-install',"--server=freeipa-master-${domain}","--hostname=${host}","--domain=${domain}","--realm=${realm}","--password=${otp}",$mkhomediropt,$ntpopt,$fixedprimaryopt,'--unattended')
+  $clientinstallcmd = shellquote('/usr/sbin/ipa-client-install',"--server=${masterfqdn}","--hostname=${host}","--domain=${domain}","--realm=${realm}","--principal=admin@${principal}","--password=${otp}",$mkhomediropt,$ntpopt,$fixedprimaryopt,'--unattended')
   $dc = prefix([regsubst($domain,'(\.)',',dc=','G')],'dc=')
   $searchostldapcmd = shellquote('/usr/bin/k5start','-u',"host/${host}",'-f','/etc/krb5.keytab','--','/usr/bin/ldapsearch','-Y','GSSAPI','-H',"ldap://${masterfqdn}",'-b',$dc,"fqdn=${host}")
 
@@ -44,6 +47,14 @@ define ipa::clientinstall (
     logoutput => 'on_failure'
   }
 
-  ipa::flushcache { "client-${host}":
-  }
+#  ipa::flushcache { "client-${host}":
+ # }
+   
+  if "$mkhomedir" == 'true' {
+    exec { "allow user logins":
+      command => "authconfig --update --enablemkhomedir"
+    }
+  } ->
+  notify { "MEOWWWWWWWWWWWWWWWWW $clientinstallcmd": }
+
 }

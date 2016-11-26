@@ -41,7 +41,7 @@ class ipa::client (
     realize Package['kstart']
   }
 
-  Ipa::Clientinstall <<| |>> {
+  Ipa::Clientinstall{"$::fqdn":
     name         => $::fqdn,
     otp          => $ipa::client::otp,
     domain       => $ipa::client::domain,
