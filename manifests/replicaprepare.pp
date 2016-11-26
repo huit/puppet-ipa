@@ -1,3 +1,4 @@
+
 define ipa::replicaprepare (
   $replica_fqdn = $name,
   $replica_hostname = {},
@@ -13,7 +14,7 @@ define ipa::replicaprepare (
     before  => File_line["add $replica_hostname to hosts"]
   }
 
-  Cron['k5start_root'] -> File_line["add $replica_hostname to hosts"] ~> Exec["replicaprepare-${replica_fqdn}"] ~> Exec["replica-info-upload-${replica_fqdn}"] ~> Ipa::Hostdelete[$replica_fqdn]
+  Cron['k5start_root'] -> File_line["add $replica_hostname to hosts"] ~> Exec["replicaprepare-${replica_fqdn}"] ~> Exec["replica-info-upload-${replica_fqdn}"] # ~> Ipa::Hostdelete[$replica_fqdn]
 
   file_line { "add $replica_hostname to hosts":
     ensure  => present,
@@ -36,5 +37,5 @@ define ipa::replicaprepare (
     command     => "/bin/aws s3 cp /var/lib/ipa/replica-info-${replica_fqdn}.gpg s3://${::environment}-${replica_region}-s3-credentials/ipa_gpg/",
   }
 
-  ipa::hostdelete { $replica_fqdn:}
+#  ipa::hostdelete { $replica_fqdn:}
 }
