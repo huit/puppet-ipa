@@ -281,7 +281,8 @@ class ipa (
       kstart      => $ipa::kstart,
       sssd        => $ipa::sssd
     }
-
+  }
+  if $ipa::client {
     class { 'ipa::client':
       clntpkg      => $ipa::clntpkg,
       ldaputils    => $ipa::ldaputils,
@@ -305,47 +306,15 @@ class ipa (
       locality     => $ipa::locality,
       location     => $ipa::location
     }
-
-    if ! $ipa::adminpw {
-      fail('Required parameter "adminpw" missing')
-    }
-
-    if ! $ipa::dspw {
-      fail('Required parameter "dspw" missing')
-    }
-
-    if ! $ipa::otp {
-      fail('Required parameter "otp" missing')
-    }
+  }
+  if ! $ipa::adminpw {
+    fail('Required parameter "adminpw" missing')
+  }
+  if ! $ipa::dspw {
+    fail('Required parameter "dspw" missing')
   }
 
-  if $ipa::client {
-    class { 'ipa::client':
-      clntpkg       => $ipa::clntpkg,
-      ldaputils     => $ipa::ldaputils,
-      ldaputilspkg  => $ipa::ldaputilspkg,
-      sssdtools     => $ipa::sssdtools,
-      sssdtoolspkg  => $ipa::sssdtoolspkg,
-      sssd          => $ipa::sssd,
-      domain        => downcase($ipa::domain),
-      realm         => upcase($profile::freeipa::realm),
-      otp           => $ipa::otp,
-      sudo          => $ipa::sudo,
-      debiansudopkg => $ipa::debiansudopkg,
-      automount     => $ipa::automount,
-      autofs        => $ipa::autofs,
-      mkhomedir     => $ipa::mkhomedir,
-      loadbalance   => $ipa::loadbalance,
-      ipaservers    => $ipa::ipaservers,
-      ntp           => $ipa::ntp,
-      fixedprimary  => $ipa::fixedprimary,
-      desc          => $ipa::desc,
-      locality      => $ipa::locality,
-      location      => $ipa::location
-    }
-
-    if ! $ipa::otp {
-      fail('Required parameter "otp" missing')
-    }
+  if ! $ipa::otp {
+    fail('Required parameter "otp" missing')
   }
 }
