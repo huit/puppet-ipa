@@ -33,7 +33,7 @@ define ipa::clientinstall (
     default => ''
   }
 
-  $clientinstallcmd = shellquote('/usr/sbin/ipa-client-install',"--server=${masterfqdn}","--hostname=${host}","--domain=${domain}","--realm=${realm}","--principal=admin@${principal}","--password=${otp}",$mkhomediropt,$ntpopt,$fixedprimaryopt,'--unattended')
+  $clientinstallcmd = shellquote('/usr/sbin/ipa-client-install',"--server=${masterfqdn}",'--server=ipa-rep;ica-1.infra.bitbrew.com','--server=ipa-rep;ica-2.infra.bitbrew.com',"--hostname=${host}","--domain=${domain}","--realm=${realm}","--principal=admin@${principal}","--password=${otp}",$mkhomediropt,$ntpopt,$fixedprimaryopt,'--unattended')
   $dc = prefix([regsubst($domain,'(\.)',',dc=','G')],'dc=')
   $searchostldapcmd = shellquote('/usr/bin/k5start','-u',"host/${host}",'-f','/etc/krb5.keytab','--','/usr/bin/ldapsearch','-Y','GSSAPI','-H',"ldap://${masterfqdn}",'-b',$dc,"fqdn=${host}")
 
