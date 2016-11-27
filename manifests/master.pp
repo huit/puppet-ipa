@@ -190,7 +190,6 @@ class ipa::master (
   }
 
   @@ipa::clientinstall { $ipa::master::fqdn:
-    masterfqdn => $ipa::master::fqdn,
     domain     => $ipa::master::domain,
     realm      => $ipa::master::realm,
     adminpw    => $ipa::master::adminpw,
@@ -201,7 +200,6 @@ class ipa::master (
 
   if $ipa::master::sudo {
     @@ipa::configsudo { $ipa::master::fqdn:
-      masterfqdn => $ipa::master::fqdn,
       domain     => $ipa::master::domain,
       adminpw    => $ipa::master::adminpw,
       sudopw     => $ipa::master::sudopw
@@ -210,7 +208,6 @@ class ipa::master (
 
   if $ipa::master::automount {
     @@ipa::configautomount { $ipa::master::fqdn:
-      masterfqdn => $ipa::master::fqdn,
       os         => $::osfamily,
       domain     => $ipa::master::domain,
       realm      => $ipa::master::realm
