@@ -127,7 +127,6 @@ class ipa::master (
   ipa::serverinstall { $ipa::master::fqdn:
     realm           => $ipa::master::realm,
     domain          => $ipa::master::domain,
-    adminpw         => $ipa::adminpw,
     dspw            => $ipa::master::dspw,
     dnsopt          => $ipa::master::dnsopt,
     forwarderopts   => $ipa::master::forwarderopts,
@@ -192,7 +191,6 @@ class ipa::master (
   @@ipa::clientinstall { $ipa::master::fqdn:
     domain     => $ipa::master::domain,
     realm      => $ipa::master::realm,
-    adminpw    => $ipa::adminpw,
     otp        => '',
     mkhomedir  => '',
     ntp        => ''
@@ -201,7 +199,6 @@ class ipa::master (
   if $ipa::master::sudo {
     @@ipa::configsudo { $ipa::master::fqdn:
       domain     => $ipa::master::domain,
-      adminpw    => $ipa::adminpw,
       sudopw     => $ipa::master::sudopw
     }
   }
