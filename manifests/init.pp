@@ -62,9 +62,9 @@
 #
 class ipa (
   $master_region   = undef,
-  $master          = false,
-  $replica         = false,
-  $client          = false,
+  $master          = undef,
+  $replica         = undef,
+  $client          = undef,
   $cleanup         = false,
   $domain          = $profile::freeipa::ipa_domain,
   $realm           = $profile::freeipa::realm,
@@ -281,7 +281,7 @@ class ipa (
       kstart      => $ipa::kstart,
       sssd        => $ipa::sssd
     }
-  }
+
   if $ipa::client {
     class { 'ipa::client':
       clntpkg      => $ipa::clntpkg,
@@ -307,14 +307,16 @@ class ipa (
       location     => $ipa::location
     }
   }
-  if ! $ipa::adminpw {
-    fail('Required parameter "adminpw" missing')
-  }
-  if ! $ipa::dspw {
-    fail('Required parameter "dspw" missing')
-  }
+    if ! $ipa::adminpw {
+      fail('Required parameter "adminpw" missing')
+    }
 
-  if ! $ipa::otp {
-    fail('Required parameter "otp" missing')
+    if ! $ipa::dspw {
+      fail('Required parameter "dspw" missing')
+    }
+
+    if ! $ipa::otp {
+      fail('Required parameter "otp" missing')
+    }
   }
 }
