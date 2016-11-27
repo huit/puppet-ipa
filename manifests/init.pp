@@ -68,7 +68,7 @@ class ipa (
   $cleanup         = false,
   $domain          = $profile::freeipa::ipa_domain,
   $realm           = $profile::freeipa::realm,
-  $adminpw         = undef,
+  $adminpw         = $profile::freeipa::adminpw,
   $dspw            = undef,
   $otp             = undef,
   $dns             = false,
