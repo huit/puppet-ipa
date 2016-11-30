@@ -22,7 +22,7 @@ define ipa::replicainstall (
   Exec['download gpg'] ~>  Exec["replicainfocheck-${host}"] ~> Exec["clientuninstall-${host}"] ~> Exec["replicainstall-${host}"] ~> Exec["removereplicainfo-${host}"] ~> Exec['authorize-home-dirs']
 
   exec { "download gpg":
-    command => "/bin/aws s3 cp s3://${::environment}-${::region}-s3-credentials/ipa_gpg/replica-info-${host}.gpg /var/lib/ipa/",
+    command => "/bin/aws s3 cp s3://infrastructure-${::region}-s3-credentials/ipa_gpg/replica-info-${host}.gpg /var/lib/ipa/",
     before  => Exec["replicainfocheck-${host}"]
     }
 

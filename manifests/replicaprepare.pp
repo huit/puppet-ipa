@@ -34,7 +34,7 @@ define ipa::replicaprepare (
   }
 
   exec { "replica-info-upload-${replica_fqdn}":
-    command     => "/bin/aws s3 cp /var/lib/ipa/replica-info-${replica_fqdn}.gpg s3://${::environment}-${replica_region}-s3-credentials/ipa_gpg/",
+    command     => "/bin/aws s3 cp /var/lib/ipa/replica-info-${replica_fqdn}.gpg s3://infrastructure-${replica_region}-s3-credentials/ipa_gpg/",
   }
 
   ipa::hostdelete { $replica_fqdn:}
