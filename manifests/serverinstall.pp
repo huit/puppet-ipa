@@ -30,7 +30,7 @@ define ipa::serverinstall (
       file { '/etc/hosts':
     ensure  => file,
     mode    => '0644',
-    content => template('profile/freeipa/hosts.erb'),
+    content => template('ipa/hosts.erb'),
     before  => Exec["serverinstall-${host}"],
   }
     $install_command = shellquote('/usr/sbin/ipa-restore',"/var/lib/ipa/backup/${::restore_dir}",'--unattended','--password',"${adminpw}")
