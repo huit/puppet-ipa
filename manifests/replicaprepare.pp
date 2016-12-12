@@ -2,25 +2,23 @@
 define ipa::replicaprepare (
   $replica_fqdn = $name,
   $replica_hostname = {},
-  $replica_region = {},
-  $replica_ip = {},
   $dspw,
 ) {
 
-  notify { "REPLICA FQDN, HOSTNAME, REGION, AND IP ARE: $replica_fqdn $replica_hostname $replica_region $replica_ip":}
+  notify { "REPLICA FQDN, HOSTNAME, REGION, AND IP ARE: $replica_fqdn $replica_hostname":}
 
   exec { "remove $replica_hostname":
     command => "ipa-replica-manage del --cleanup --password ${adminpw} --force ${replica_fqdn} ; echo true",
-    before  => File_line["add $replica_hostname to hosts"]
+#    before  => File_line["add $replica_hostname to hosts"]
   }
 
-  Cron['k5start_root'] -> File_line["add $replica_hostname to hosts"] ~> Exec["replicaprepare-${replica_fqdn}"] ~> Exec["replica-info-upload-${replica_fqdn}"] ~> Ipa::Hostdelete[$replica_fqdn]
+  Cron['k5start_root'] -> Exec["replicaprepare-${replica_fqdn}"] ~> Exec["replica-info-upload-${replica_fqdn}"] ~> Ipa::Hostdelete[$replica_fqdn]
 
-  file_line { "add $replica_hostname to hosts":
-    ensure  => present,
-    line    => "$replica_ip $replica_fqdn $replica_hostname",
-    path    => '/etc/hosts'
-  }
+#  file_line { "add $replica_hostname to hosts":
+#    ensure  => present,
+#    line    => "$replica_ip $replica_fqdn $replica_hostname",
+#    path    => '/etc/hosts'
+#  }
 
 #  realize Cron['k5start_root']
 
@@ -34,7 +32,7 @@ define ipa::replicaprepare (
   }
 
   exec { "replica-info-upload-${replica_fqdn}":
-    command     => "/bin/aws s3 cp /var/lib/ipa/replica-info-${replica_fqdn}.gpg s3://infrastructure-${replica_region}-s3-credentials/ipa_gpg/",
+    command     => "/bin/aws s3 cp /var/lib/ipa/replica-info-${replica_fqdn}.gpg s3://infrastructure-${::environment}-s3-credentials/ipa_gpg/",
   }
 
   ipa::hostdelete { $replica_fqdn:}
