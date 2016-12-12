@@ -66,7 +66,7 @@ class ipa (
   $replica         = undef,
   $client          = undef,
   $cleanup         = false,
-  $domain          = ${::public_dns},
+  $domain          = $profile::freeipa::public_dns,
   $realm           = $profile::freeipa::realm,
   $adminpw         = $profile::freeipa::adminpw,
   $dspw            = undef,
@@ -236,8 +236,8 @@ class ipa (
       svrpkg          => $ipa::svrpkg,
       dns             => $ipa::dns,
       forwarders      => $ipa::forwarders,
-      domain          => ${::public_dns},
-      realm           => $profile::freeipa::realm,
+      domain          => $ipa::domain,
+      realm           => $ipa::realm,
       adminpw         => $profile::freeipa::adminpw,
       loadbalance     => $ipa::loadbalance,
       ipaservers      => $ipa::ipaservers,
@@ -274,7 +274,7 @@ class ipa (
   if $ipa::replica {
     class { 'ipa::replica':
       svrpkg      => $ipa::svrpkg,
-      domain  => downcase($ipa::domain),
+      domain      => $ipa::domain,
       adminpw     => $ipa::adminpw,
       dspw        => $ipa::dspw,
       kstart      => $ipa::kstart,
@@ -293,8 +293,8 @@ class ipa (
       loadbalance  => $ipa::loadbalance,
       ipaservers   => $ipa::ipaservers,
       mkhomedir    => $ipa::mkhomedir,
-      domain       => downcase($ipa::domain),
-      realm        => upcase($profile::freeipa::realm),
+      domain       => $ipa::domain,
+      realm        => $ipa::realm,
       otp          => $ipa::otp,
       sudo         => $ipa::sudo,
       automount    => $ipa::automount,
@@ -319,3 +319,4 @@ class ipa (
     }
   }
 }
+
