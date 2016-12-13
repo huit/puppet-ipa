@@ -18,8 +18,8 @@ class ipa::master (
   $domain        = {},
   $ipaservers    = [],
   $loadbalance   = {},
-  $adminpw       = {},
-  $dspw          = {},
+  $adminpw       = $profile::freeipa::adminpw,
+  $dspw          = $profile::freeipa::dspw,
   $sudo          = {},
   $sudopw        = {},
   $automount     = {},
@@ -39,8 +39,9 @@ class ipa::master (
   $subject       = {},
   $selfsign      = {},
   $idstart       = {},
-  $fqdn          = "freeipa-master.${domain}"
 ) {
+
+  $fqdn = "${::fqdn}"
 
   Ipa::Serverinstall[$ipa::master::fqdn] ->  File['/etc/ipa/primary'] -> Ipa::Hostadd <<| |>> -> Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>> -> Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>> -> Ipa::Createreplicas[$ipa::master::fqdn]
 
