@@ -8,49 +8,36 @@ define ipa::replicainstall (
   $dspw    = {}
 ) {
 
-  if ("$host" =~ 'replica-1') {
-    notify { "Installing first replica":}
-  } else {
-    exec { "Pause for ${host} replica installation" :
-      command => "sleep 180",
-      before  => Exec['download gpg'],
-    }
-  }
-
-  $file = "/var/lib/ipa/replica-info-${host}.gpg"
-
-  Exec['download gpg'] ~>  Exec["replicainfocheck-${host}"] ~> Exec["clientuninstall-${host}"] ~> Exec["replicainstall-${host}"] ~> Exec["removereplicainfo-${host}"] ~> Exec['authorize-home-dirs']
-
-  exec { "download gpg":
-    command => "/bin/aws s3 cp s3://infrastructure-${::region}-s3-credentials/ipa_gpg/replica-info-${host}.gpg /var/lib/ipa/",
-    before  => Exec["replicainfocheck-${host}"]
-    }
-
-  exec { "replicainfocheck-${host}":
-    command   => "/usr/bin/test -e /var/lib/ipa/replica-info-${host}.gpg",
-    tries     => '60',
-    try_sleep => '60',
-    unless    => '/usr/sbin/ipactl status >/dev/null 2>&1',
-    require  => Exec['download gpg']
-  }
-
-  exec { "clientuninstall-${host}":
-    command     => '/usr/sbin/ipa-client-install --uninstall --unattended; echo true',
+#  $file = "/var/lib/ipa/replica-info-${host}.gpg"
+#
+#  Exec['download gpg'] ~>  Exec["replicainfocheck-${host}"] ~> Exec["clientuninstall-${host}"] ~> Exec["replicainstall-${host}"] ~> Exec["removereplicainfo-${host}"] ~> Exec['authorize-home-dirs']
+#
+#  exec { "download gpg":
+#    command => "/bin/aws s3 cp s3://infrastructure-${::region}-s3-credentials/ipa_gpg/replica-info-${host}.gpg /var/lib/ipa/",
+#    before  => Exec["replicainfocheck-${host}"]
+#    }
+#
+#  exec { "replicainfocheck-${host}":
+#    command   => "/usr/bin/test -e /var/lib/ipa/replica-info-${host}.gpg",
+#    tries     => '60',
+#    try_sleep => '60',
+#    unless    => '/usr/sbin/ipactl status >/dev/null 2>&1',
+#    require  => Exec['download gpg']
+#  }
+#
+#  exec { "clientuninstall-${host}":
+#    command     => '/usr/sbin/ipa-client-install --uninstall --unattended; echo true',
 #    command     => 'echo hi',
-    refreshonly => true
-  }
+#    refreshonly => true
+#  }
 
   exec { "replicainstall-${host}":
-    command     => "/usr/sbin/ipa-replica-install --admin-password=${adminpw} --password=${dspw} --skip-conncheck --unattended /var/lib/ipa/replica-info-${host}.gpg",
+    command     => "/usr/sbin/ipa-replica-install --principal admin --admin-password=${adminpw} --server=freeipa-master-${::environment}.infra.bitbrew.com --domain=infra.bitbrew.com --realm=INFRA.BITBREW.COM --unattended --no-host-dns --mkhomedir --ip-address=${::eni_private_ip}"
     timeout     => '0',
     logoutput   => 'on_failure',
     refreshonly => true
   }
 
-  exec { "removereplicainfo-${host}":
-    command     => "/bin/rm -f /var/lib/ipa/replica-info-${host}.gpg",
-    refreshonly => true
-  }
   exec { 'authorize-home-dirs':
     command => 'authconfig --enablemkhomedir --update',
     require => Exec["replicainstall-${host}"]
