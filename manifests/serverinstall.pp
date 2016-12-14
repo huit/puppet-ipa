@@ -32,7 +32,7 @@ define ipa::serverinstall (
       require => File['/var/lib/ipa/backup/latest']
     }
   } else {
-      $install_command = shellquote('/usr/sbin/ipa-server-install',"--hostname=${host}","--realm=${realm}","--domain=${domain}","--admin-password=${adminpw}","--ds-password=${dspw}","${dnsopt}","${forwarderopts}","${ntpopt}","${extcaopt}","${idstartopt}",'--unattended',"--ip-address ${::eni_private_ip}","--ip-address ${::public_ip}")
+      $install_command = shellquote('/usr/sbin/ipa-server-install',"--hostname=${host}","--realm=${realm}","--domain=${domain}","--admin-password=${adminpw}","--ds-password=${dspw}","${dnsopt}","${forwarderopts}","${ntpopt}","${extcaopt}","${idstartopt}",'--unattended',"--ip-address=${::eni_private_ip}","--ip-address=${::public_ip}")
   }
 
   notify { "Installing IPA Master. Restore option is set to ${restore}, restore directory is set to ${::restore_dir}":
