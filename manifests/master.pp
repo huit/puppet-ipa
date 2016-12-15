@@ -43,11 +43,12 @@ class ipa::master (
 
   $fqdn = "${::fqdn}"
 
-  Ipa::Serverinstall[$ipa::master::fqdn] ->  File['/etc/ipa/primary'] -> Ipa::Hostadd <<| |>> -> Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>> -> Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>> -> Ipa::Createreplicas[$ipa::master::fqdn]
+  Ipa::Serverinstall[$ipa::master::fqdn] ->  File['/etc/ipa/primary']
+#  Ipa::Serverinstall[$ipa::master::fqdn] ->  File['/etc/ipa/primary'] -> Ipa::Hostadd <<| |>> -> Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>> -> Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>> -> Ipa::Createreplicas[$ipa::master::fqdn]
 
-  Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>>
-  Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>>
-  Ipa::Hostadd <<| |>>
+#  Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>>
+#  Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>>
+#  Ipa::Hostadd <<| |>>
 
   file { '/etc/ipa/primary':
     ensure  => 'file',
@@ -157,9 +158,6 @@ class ipa::master (
     }
   }
 
-  ipa::createreplicas { $ipa::master::fqdn:
-  }
-
   firewall { '101 allow IPA master TCP services (http,https,kerberos,kpasswd,ldap,ldaps)':
     ensure => 'present',
     action => 'accept',
@@ -172,16 +170,6 @@ class ipa::master (
     action => 'accept',
     proto  => 'udp',
     dport  => ['88','123','464']
-  }
-
-  @@ipa::replicapreparefirewall { $ipa::master::fqdn:
-    source => $::ipaddress,
-    tag    => "ipa-replica-prepare-firewall-${ipa::master::domain}"
-  }
-
-  @@ipa::masterreplicationfirewall { $ipa::master::fqdn:
-    source => $::ipaddress,
-    tag    => "ipa-master-replication-firewall-${ipa::master::domain}"
   }
 
   @@ipa::masterprincipal { $ipa::master::fqdn:
