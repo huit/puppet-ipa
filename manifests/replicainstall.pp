@@ -32,7 +32,7 @@ define ipa::replicainstall (
 #  }
 
   exec { "replicainstall-${host}":
-    command     => "/usr/sbin/ipa-replica-install --principal admin --admin-password=${adminpw} --server=freeipa-master-${::environment}.infra.bitbrew.com --domain=infra.bitbrew.com --realm=INFRA.BITBREW.COM --unattended --no-host-dns --setup-ca --mkhomedir --ip-address=${::eni_private_ip}",
+    command     => "/usr/sbin/ipa-replica-install --skip-conncheck --principal admin --admin-password=${adminpw} --server=freeipa-master-${::environment}.infra.bitbrew.com --domain=infra.bitbrew.com --realm=INFRA.BITBREW.COM --unattended --no-host-dns --setup-ca --mkhomedir --ip-address=${::eni_private_ip}",
     timeout     => '0',
   }
 
