@@ -46,13 +46,18 @@ class ipa::master (
   Ipa::Serverinstall[$ipa::master::fqdn] ->  File['/etc/ipa/primary']
 #  Ipa::Serverinstall[$ipa::master::fqdn] ->  File['/etc/ipa/primary'] -> Ipa::Hostadd <<| |>> -> Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>> -> Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>> -> Ipa::Createreplicas[$ipa::master::fqdn]
 
-#  Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>>
-#  Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>>
-#  Ipa::Hostadd <<| |>>
-
   file { '/etc/ipa/primary':
     ensure  => 'file',
     content => 'Added by HUIT IPA Puppet module: designates primary master - do not remove.'
+  }
+
+  profile::resources::freeipa_backup{ 'master':
+      require          => File['/etc/ipa/primary'],
+    }
+
+  profile::resources::freeipa_remove_replica{ 'master':
+      adminpw          => $adminpw,
+      require          => File['/etc/ipa/primary'],
   }
 
   if $ipa::master::sudo {
