@@ -52,12 +52,7 @@ class ipa::master (
   }
 
   profile::resources::freeipa_backup{ 'master':
-      require          => File['/etc/ipa/primary'],
-    }
-
-  profile::resources::freeipa_remove_replica{ 'master':
-      adminpw          => $adminpw,
-      require          => File['/etc/ipa/primary'],
+    require  => File['/etc/ipa/primary'],
   }
 
   if $ipa::master::sudo {

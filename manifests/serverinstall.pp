@@ -4,9 +4,9 @@
 define ipa::serverinstall (
   $host            = $name,
   $realm           = {},
-  $domain          = {},
-  $adminpw         = $profile::freeipa::adminpw,
-  $dspw            = $profile::freeipa::dspw,
+  $domain          = hiera('profile::freeipa::domain'),
+  $adminpw         = hiera('profile::freeipa::adminpw'),
+  $dspw            = hiera('profile::freeipa::dspw'),
   $dnsopt          = {},
   $forwarderopts   = {},
   $ntpopt          = {},
@@ -20,7 +20,7 @@ define ipa::serverinstall (
 
   file { '/var/lib/ipa/backup/latest':
     ensure  =>  directory,
-    mode    =>  0644,
+    mode    =>  0600,
     before  =>  Exec["serverinstall-${host}"]
   }
 
