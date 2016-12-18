@@ -1,24 +1,14 @@
 # Class: ipa::replica
-#
 # This class configures an IPA replica
-#
-# Parameters:
-#
-# Actions:
-#
-# Requires: Exported resources, puppetlabs/puppetlabs-firewall, puppetlabs/stdlib
-#
-# Sample Usage:
-#
+
 class ipa::replica (
   $svrpkg      = {},
-  $adminpw     = {},
-  $dspw        = {},
-  $domain      = {},
+  $adminpw     = hiera('profile::freeipa::adminpw'),
+  $dspw        = hiera('profile::freeipa::dspw'),
+  $domain      = hiera('profile::freeipa::domain'),
   $kstart      = {},
   $sssd        = {},
-  $fqdn        = "${::hostname}.${::public_dns}",
-#  $fqdn        = "${role}-${region}.${domain}",
+  $fqdn        = hiera('profile::freeipa::fqdn'),
 ) {
 
   Ipa::Masterprincipal <<| tag == "ipa-master-principal-${ipa::replica::domain}" |>> -> Ipa::Replicapreparefirewall <<| tag == "ipa-replica-prepare-firewall-${ipa::replica::domain}" |>> -> Ipa::Masterreplicationfirewall <<| tag == "ipa-master-replication-firewall-${ipa::replica::domain}" |>> -> Ipa::Replicainstall[$ipa::replica::fqdn] -> Service['ipa']
@@ -58,9 +48,10 @@ class ipa::replica (
     dport  => ['88','123','464']
   }
 
-  ipa::replicainstall { $ipa::replica::fqdn:
-    adminpw         => $ipa::replica::adminpw,
-    dspw            => $ipa::replica::dspw,
+  ipa::replicainstall { $fqdn:
+    domain          => $domain,
+    adminpw         => $adminpw,
+    dspw            => $dspw,
     require         => Package[$ipa::replica::svrpkg]
   }
 
