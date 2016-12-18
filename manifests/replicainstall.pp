@@ -4,13 +4,12 @@
 define ipa::replicainstall (
   $host    = $name,
   $adminpw = {},
-  $dspw    = {}
+  $dspw    = {},
   $domain,
 ) {
 
   exec { "add master host entry":
     command => "echo $(dig +short freeipa-master-${::environment}.${domain})  freeipa-master-${::environment}.${domain} freeipa-master-${::environment} >> /etc/hosts",
-    require => Profile::freeipa::file['/etc/hosts'],
     before  => Exec["replicainstall-${host}"],
   }
 
