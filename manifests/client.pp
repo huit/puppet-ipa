@@ -19,13 +19,13 @@ class ipa::client (
   $sssd          = {},
   $kstart        = true,
   $client        = {},
-  $domain        = {},
-  $realm         = {},
+  $domain        = hiera('profile::freeipa::domain'),,
+  $realm         = hiera('profile::freeipa::realm'),
   $sudo          = {},
   $debiansudopkg = {},
   $automount     = {},
   $autofs        = {},
-  $otp           = {},
+  $otp           = hiera('profile::freeipa::otp'),
   $ipaservers    = [],
   $loadbalance   = {},
   $mkhomedir     = true,
@@ -35,6 +35,8 @@ class ipa::client (
   $locality      = {},
   $location      = {}
 ) {
+
+  $fqdn = ${::fqdn}
 
   if $ipa::client::kstart {
     Package['kstart'] -> Ipa::Clientinstall<||>

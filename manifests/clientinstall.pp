@@ -8,7 +8,8 @@ define ipa::clientinstall (
   $otp          = hiera('profile::freeipa::otp'),
   $mkhomedir    = true,
   $ntp          = {},
-  $fixedprimary = false
+  $fixedprimary = false,
+  $fqdn         = {},
 ) {
 
   $masterfqdn = "freeipa-master.${domain}"
@@ -33,7 +34,9 @@ define ipa::clientinstall (
     default => ''
   }
 
-  $clientinstallcmd = shellquote('/usr/sbin/ipa-client-install',"--server=ipa-replica-1-${::environment}.${domain}","--server=ipa-replica-2-${::environment}.${domain}","--server=freeipa-master-${::environment}.${domain}","--hostname=${::fqdn}","--domain=${domain}","--realm=${realm}",'--principal=admin',"--password=${otp}",$mkhomediropt,$ntpopt,$fixedprimaryopt,'--unattended')
+  notify {"HIT CLIENT INSTALLLLLLLLLLLLLLLLLLLLLLLLLLLLLL":}
+
+  $clientinstallcmd = shellquote('/usr/sbin/ipa-client-install',"--server=ipa-replica-1-${::environment}.${domain}","--server=ipa-replica-2-${::environment}.${domain}","--server=freeipa-master-${::environment}.${domain}","--hostname=${fqdn}","--domain=${domain}","--realm=${realm}",'--principal=admin',"--password=${otp}",$mkhomediropt,$ntpopt,$fixedprimaryopt,'--unattended')
   $dc = prefix([regsubst($domain,'(\.)',',dc=','G')],'dc=')
   $searchostldapcmd = shellquote('/usr/bin/k5start','-u',"host/${host}",'-f','/etc/krb5.keytab','--','/usr/bin/ldapsearch','-Y','GSSAPI','-H',"ldap://freeipa-replica-1-${::environment}.${domain}",'-b',$dc,"fqdn=freeipa-replica-1-${::environment}.${domain}")
 
