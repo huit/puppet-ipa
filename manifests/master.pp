@@ -51,10 +51,6 @@ class ipa::master (
     content => 'Added by HUIT IPA Puppet module: designates primary master - do not remove.'
   }
 
-  profile::resources::freeipa_backup{ 'master':
-    require  => File['/etc/ipa/primary'],
-  }
-
   if $ipa::master::sudo {
     Ipa::Configsudo <<| |>> {
       name    => $ipa::master::fqdn,
