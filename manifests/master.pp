@@ -173,14 +173,6 @@ class ipa::master (
     tag   => "ipa-master-principal-${ipa::master::domain}"
   }
 
-  @@ipa::clientinstall { $ipa::master::fqdn:
-    domain     => $ipa::master::domain,
-    realm      => $ipa::master::realm,
-    otp        => '',
-    mkhomedir  => '',
-    ntp        => ''
-  }
-
   if $ipa::master::sudo {
     @@ipa::configsudo { $ipa::master::fqdn:
       domain     => $ipa::master::domain,
