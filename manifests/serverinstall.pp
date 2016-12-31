@@ -3,7 +3,7 @@
 # Installs an IPA server
 define ipa::serverinstall (
   $host            = $name,
-  $realm           = {},
+  $realm           = hiera('profile::freeipa::realm'),
   $domain          = hiera('profile::freeipa::domain'),
   $adminpw         = hiera('profile::freeipa::adminpw'),
   $dspw            = hiera('profile::freeipa::dspw'),
@@ -57,19 +57,19 @@ define ipa::serverinstall (
     notify    => Ipa::Flushcache["server-${host}"]
   }
 
-  ipa::flushcache { "server-${host}":
-    notify  => Ipa::Adminconfig[$host],
-    require => Anchor['ipa::serverinstall::start']
-  }
+#  ipa::flushcache { "server-${host}":
+#    notify  => Ipa::Adminconfig[$host],
+#    require => Anchor['ipa::serverinstall::start']
+#  }
 
-  ipa::adminconfig { $host:
-    realm   => $realm,
-    idstart => $idstart,
-    require => Anchor['ipa::serverinstall::start']
-  }
+#  ipa::adminconfig { $host:
+#    realm   => $realm,
+#    idstart => $idstart,
+#    require => Anchor['ipa::serverinstall::start']
+#  }
 
   anchor { 'ipa::serverinstall::end':
-    require => [Ipa::Flushcache["server-${host}"], Ipa::Adminconfig[$host]]
+    require => Exec["serverinstall-${host}"]
   }
 
   exec { 'authorize-home-dirs':

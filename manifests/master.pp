@@ -14,7 +14,7 @@ class ipa::master (
   $svrpkg        = {},
   $dns           = {},
   $forwarders    = [],
-  $realm         = {},
+  $realm         = hiera('profile::freeipa::realm'),
   $domain        = hiera('profile::freeipa::domain'),
   $ipaservers    = [],
   $loadbalance   = {},
