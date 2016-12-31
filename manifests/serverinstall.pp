@@ -54,7 +54,7 @@ define ipa::serverinstall (
     timeout   => '0',
     unless    => '/usr/sbin/ipactl status >/dev/null 2>&1',
     creates   => '/etc/ipa/default.conf',
-    notify    => Ipa::Flushcache["server-${host}"]
+#    notify    => Ipa::Flushcache["server-${host}"]
   }
 
 #  ipa::flushcache { "server-${host}":
