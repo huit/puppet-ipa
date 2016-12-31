@@ -31,6 +31,11 @@ define ipa::serverinstall (
       before  => Exec["serverinstall-${host}"],
       require => File['/var/lib/ipa/backup/latest']
     }
+    exec { 'download s3 host keys':
+      command => "aws s3 cp s3://infrastructure-${::environment}-s3-credentials/master_host_keys/ /etc/ssh/ --recursive",
+      before  => Exec["serverinstall-${host}"],
+      require => File['/var/lib/ipa/backup/latest']
+    }
   } else {
       $install_command = shellquote('/usr/sbin/ipa-server-install',"--hostname=${host}","--realm=${realm}","--domain=${domain}","--admin-password=${adminpw}","--ds-password=${dspw}","${dnsopt}","${forwarderopts}",'--no-ntp',"${extcaopt}","${idstartopt}",'--unattended',"--ip-address=${::ipaddress}")
   }
