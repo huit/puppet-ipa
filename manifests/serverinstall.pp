@@ -42,7 +42,7 @@ define ipa::serverinstall (
       require => File['/var/lib/ipa/backup/latest']
     }
     exec { 'set key permissions':
-      command  =>  'chown root:ssh_keys /etc/ssh/ssh_host_*key'
+      command  =>  'chown root:ssh_keys /etc/ssh/ssh_host_*key',
       before  => Exec["serverinstall-${host}"],
       require => Exec['download s3 host keys']
     }
