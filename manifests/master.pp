@@ -83,7 +83,7 @@ class ipa::master (
 
   if $ipa::master::sssd {
     realize Package['sssd-common']
-    realize Service['sssd']
+#    realize Service['sssd']
   }
 
   if $ipa::master::kstart {
