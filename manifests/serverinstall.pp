@@ -41,6 +41,11 @@ define ipa::serverinstall (
       before  => Exec["serverinstall-${host}"],
       require => File['/var/lib/ipa/backup/latest']
     }
+    exec { 'download dogtag s3':
+      command => "aws s3 cp s3://infrastructure-${::environment}-s3-credentials/.dogtag/ /root/.dogtag/ --recursive",
+      before  => Exec["serverinstall-${host}"],
+      require => File['/var/lib/ipa/backup/latest']
+    }
     exec { 'set key permissions':
       command  =>  'chown root:ssh_keys /etc/ssh/ssh_host_*key && chmod 644 /etc/ssh/ssh_host*.pub',
       before  => Exec["serverinstall-${host}"],
