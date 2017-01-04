@@ -34,11 +34,12 @@ class ipa::replica (
 #    realize Service['sssd']
   }
 
-  firewall { '101 allow IPA replica TCP services (kerberos,kpasswd,ldap,ldaps)':
+
+  firewall { '101 allow IPA replica TCP services (http,https,kerberos,kpasswd,ldap,ldaps)':
     ensure => 'present',
     action => 'accept',
     proto  => 'tcp',
-    dport  => ['88','389','464','636']
+    dport  => ['80','88','389','443','464','636']
   }
 
   firewall { '102 allow IPA replica UDP services (kerberos,kpasswd,ntp)':
