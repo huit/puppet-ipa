@@ -52,7 +52,7 @@ define ipa::serverinstall (
       require => File['/var/lib/ipa/backup/latest']
     } ->
     exec { 'set key permissions':
-      command  =>  'chown pkiuser:pkiuser /root/cacert.p12 && chown pkiuser:pkiuser .dogtag/pki-tomcat/ca/pkcs12_password.conf && chown root:ssh_keys /etc/ssh/ssh_host_*key && chmod 644 /etc/ssh/ssh_host*.pub',
+      command  =>  'chown pkiuser:pkiuser /root/cacert.p12 && chown pkiuser:pkiuser /root/.dogtag/pki-tomcat/ca/pkcs12_password.conf && chown root:ssh_keys /etc/ssh/ssh_host_*key && chmod 644 /etc/ssh/ssh_host*.pub',
       before  => Exec["serverinstall-${host}"],
       require => Exec['download root cert s3']
     }
