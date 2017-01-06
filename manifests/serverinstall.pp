@@ -40,7 +40,7 @@ define ipa::serverinstall (
       command => "aws s3 cp s3://infrastructure-${::environment}-s3-credentials/custodia/ /etc/ipa/custodia/ --recursive",
       before  => Exec["serverinstall-${host}"],
       require => File['/var/lib/ipa/backup/latest']
-    } ->
+    }
 #    exec { 'download dogtag s3':
 #      command => "aws s3 cp s3://infrastructure-${::environment}-s3-credentials/.dogtag/ /root/.dogtag/ --recursive",
 #      before  => Exec["serverinstall-${host}"],
