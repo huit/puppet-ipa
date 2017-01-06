@@ -31,30 +31,30 @@ define ipa::serverinstall (
       before  => Exec["serverinstall-${host}"],
       require => File['/var/lib/ipa/backup/latest']
     } ->
-    exec { 'download s3 ssh files':
-      command => "aws s3 cp s3://infrastructure-${::environment}-s3-credentials/master_host_keys/ /etc/ssh/ --recursive",
-      before  => Exec["serverinstall-${host}"],
-      require => File['/var/lib/ipa/backup/latest']
-    } ->
+#    exec { 'download s3 ssh files':
+#      command => "aws s3 cp s3://infrastructure-${::environment}-s3-credentials/master_host_keys/ /etc/ssh/ --recursive",
+#      before  => Exec["serverinstall-${host}"],
+#      require => File['/var/lib/ipa/backup/latest']
+#    } ->
     exec { 'download custodia s3':
       command => "aws s3 cp s3://infrastructure-${::environment}-s3-credentials/custodia/ /etc/ipa/custodia/ --recursive",
       before  => Exec["serverinstall-${host}"],
       require => File['/var/lib/ipa/backup/latest']
     } ->
-    exec { 'download dogtag s3':
-      command => "aws s3 cp s3://infrastructure-${::environment}-s3-credentials/.dogtag/ /root/.dogtag/ --recursive",
-      before  => Exec["serverinstall-${host}"],
-      require => File['/var/lib/ipa/backup/latest']
-    } ->
-    exec { 'download root cert s3':
-      command => "aws s3 cp s3://infrastructure-${::environment}-s3-credentials/cacert/ /root/ --recursive",
-      before  => Exec["serverinstall-${host}"],
-      require => File['/var/lib/ipa/backup/latest']
-    } ->
+#    exec { 'download dogtag s3':
+#      command => "aws s3 cp s3://infrastructure-${::environment}-s3-credentials/.dogtag/ /root/.dogtag/ --recursive",
+#      before  => Exec["serverinstall-${host}"],
+#      require => File['/var/lib/ipa/backup/latest']
+#    } ->
+#    exec { 'download root cert s3':
+#      command => "aws s3 cp s3://infrastructure-${::environment}-s3-credentials/cacert/ /root/ --recursive",
+#      before  => Exec["serverinstall-${host}"],
+#      require => File['/var/lib/ipa/backup/latest']
+#    } ->
     exec { 'set key permissions':
       command  =>  'chown pkiuser:pkiuser /root/cacert.p12 && chown pkiuser:pkiuser /root/.dogtag/pki-tomcat/ca/pkcs12_password.conf && chown root:ssh_keys /etc/ssh/ssh_host_*key && chmod 644 /etc/ssh/ssh_host*.pub',
       before  => Exec["serverinstall-${host}"],
-      require => Exec['download root cert s3']
+#      require => Exec['download root cert s3']
     }
   } else {
       $install_command = shellquote('/usr/sbin/ipa-server-install',"--hostname=${host}","--realm=${realm}","--domain=${domain}","--admin-password=${adminpw}","--ds-password=${dspw}","${dnsopt}","${forwarderopts}",'--no-ntp',"${extcaopt}","${idstartopt}",'--unattended',"--ip-address=${::ipaddress}")
