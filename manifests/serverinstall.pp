@@ -51,11 +51,11 @@ define ipa::serverinstall (
 #      before  => Exec["serverinstall-${host}"],
 #      require => File['/var/lib/ipa/backup/latest']
 #    } ->
-    exec { 'set key permissions':
-      command  =>  'chown pkiuser:pkiuser /root/cacert.p12 && chown pkiuser:pkiuser /root/.dogtag/pki-tomcat/ca/pkcs12_password.conf && chown root:ssh_keys /etc/ssh/ssh_host_*key && chmod 644 /etc/ssh/ssh_host*.pub',
-      before  => Exec["serverinstall-${host}"],
+#    exec { 'set key permissions':
+#      command  =>  'chown pkiuser:pkiuser /root/cacert.p12 && chown pkiuser:pkiuser /root/.dogtag/pki-tomcat/ca/pkcs12_password.conf && chown root:ssh_keys /etc/ssh/ssh_host_*key && chmod 644 /etc/ssh/ssh_host*.pub',
+#      before  => Exec["serverinstall-${host}"],
 #      require => Exec['download root cert s3']
-    }
+#    }
   } else {
       $install_command = shellquote('/usr/sbin/ipa-server-install',"--hostname=${host}","--realm=${realm}","--domain=${domain}","--admin-password=${adminpw}","--ds-password=${dspw}","${dnsopt}","${forwarderopts}",'--no-ntp',"${extcaopt}","${idstartopt}",'--unattended',"--ip-address=${::ipaddress}")
   }
