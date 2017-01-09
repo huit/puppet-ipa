@@ -16,7 +16,7 @@ define ipa::replicainstall (
   exec { "replicainstall-${host}":
     command     => "/usr/sbin/ipa-replica-install --hostname=${::ec2_public_hostname} --skip-conncheck --setup-ca --principal=admin --admin-password=${adminpw} --server=freeipa-master-${::environment}.infra.bitbrew.com --domain=infra.bitbrew.com --realm=INFRA.BITBREW.COM --unattended --no-host-dns --mkhomedir",
     timeout     => '0',
-    onlyif      => 'test ! -d /etc/selinux/targeted/active/modules/100/ipa',
+    onlyif      => 'ipactl status && false || true',
   }
 
   exec { 'authorize-home-dirs':
