@@ -20,7 +20,7 @@ define ipa::serverinstall (
 
   file { '/var/lib/ipa/backup/latest':
     ensure  =>  directory,
-    mode    =>  0600,
+    mode    =>  '0600',
     before  =>  Exec["serverinstall-${host}"]
   }
 
