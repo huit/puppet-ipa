@@ -98,19 +98,13 @@ class ipa (
   $sssd            = false,
   $sudo            = false,
   $sudopw          = undef,
-  $debiansudopkg   = true,
+  $debiansudopkg   = false,
   $automount       = false,
   $autofs          = false,
   $svrpkg          = 'ipa-server',
-  $clntpkg         = $::osfamily ? {
-    Debian  => 'freeipa-client',
-    default => 'ipa-client',
-  },
-  $ldaputils     = true,
-  $ldaputilspkg  = $::osfamily ? {
-    Debian  => 'ldap-utils',
-    default => 'openldap-clients',
-  },
+  $clntpkg         = 'ipa-client',
+  $ldaputils       = true,
+  $ldaputilspkg    = 'openldap-clients',
   $idstart       = false
 ) {
 
