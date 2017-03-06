@@ -25,7 +25,7 @@ define ipa::serverinstall (
   }
 
   if ($::restore == "true") {
-    $install_command = shellquote('/usr/sbin/ipa-restore',"/var/lib/ipa/backup/${::restore_dir}",'--unattended','--password',"${adminpw}")
+    $install_command = shellquote('/usr/sbin/ipa-restore',"/var/lib/ipa/backup/latest",'--unattended','--password',"${adminpw}")
     exec { 'download s3 backup':
       command => "aws s3 cp s3://infrastructure-${::environment}-s3-credentials/ipa_backups/${::restore_dir}/ /var/lib/ipa/backup/latest/ --recursive",
       before  => Exec["serverinstall-${host}"],
