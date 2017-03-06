@@ -41,6 +41,18 @@ define ipa::serverinstall (
       before  => Exec["serverinstall-${host}"],
       require => File['/var/lib/ipa/backup/latest']
     }
+    file { '/usr/local/bin/upgrade_ipa':
+        ensure  => file,
+        mode    => '0700',
+        content => template('ipa/upgrade_ipa.erb')
+        before => Exec["serverinstall-${host}"]
+    } ->
+    cron { 'perform ipa-upgrade':
+      ensure  => present,
+      command => '/bin/bash /usr/local/bin/upgrade_ipa',
+      minute  => '*/5',
+      user    => 'root',
+    }
 #    exec { 'download dogtag s3':
 #      command => "aws s3 cp s3://infrastructure-${::environment}-s3-credentials/.dogtag/ /root/.dogtag/ --recursive",
 #      before  => Exec["serverinstall-${host}"],
@@ -69,19 +81,12 @@ define ipa::serverinstall (
     timeout   => '0',
     unless    => '/usr/sbin/ipactl status >/dev/null 2>&1',
     creates   => '/etc/ipa/default.conf',
-#    notify    => Ipa::Flushcache["server-${host}"]
+  } ->
+
+  cron { 'perform ipa-upgrade':
+    ensure  => absent,
+    require => Exec["serverinstall-${host}"]
   }
-
-#  ipa::flushcache { "server-${host}":
-#    notify  => Ipa::Adminconfig[$host],
-#    require => Anchor['ipa::serverinstall::start']
-#  }
-
-#  ipa::adminconfig { $host:
-#    realm   => $realm,
-#    idstart => $idstart,
-#    require => Anchor['ipa::serverinstall::start']
-#  }
 
   anchor { 'ipa::serverinstall::end':
     require => Exec["serverinstall-${host}"]
