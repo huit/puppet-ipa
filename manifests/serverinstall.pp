@@ -70,15 +70,7 @@ define ipa::serverinstall (
     unless    => '/usr/sbin/ipactl status >/dev/null 2>&1',
     creates   => '/etc/ipa/default.conf',
 #    notify    => Ipa::Flushcache["server-${host}"]
-  } ->
-
-  exec { "Perform server upgrade for ${host}":
-    command   => 'ipa-server-upgrade',
-    timeout   => '0',
-    unless    => '/sbin/ipa-replica-manage list'
-  } 
-  
-
+  }
 
 #  ipa::flushcache { "server-${host}":
 #    notify  => Ipa::Adminconfig[$host],
