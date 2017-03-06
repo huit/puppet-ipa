@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [ ! -f /var/lock/ipa_upgrade.lock ]; then
+
+	touch /var/lock/ipa_upgrade.lock
+	fail_check=$(tail -n1 /var/log/iparestore.log | grep -i 'The ipa-restore command failed')
+
+	if [ ! -z "$fail_check" ]; then
+	    /usr/sbin/ipa-upgrade
+	    /sbin/ipactl start
+	    service ipa start
+	fi
+
+	rm -rf /var/lock/ipa_upgrade.lock
+fi
+
