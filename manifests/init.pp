@@ -161,9 +161,6 @@ class ipa (
     @package { 'bind-dyndb-ldap':
       ensure => installed
     }
-    @package { 'ipa-server-dns':
-      ensure => installed
-    }
   }
 
   if $ipa::mkhomedir and $::osfamily == 'RedHat' and $::lsbmajdistrelease == '6' {
