@@ -102,13 +102,13 @@ class ipa (
   $autofs        = false,
   $svrpkg        = 'ipa-server',
   $clntpkg       = $::osfamily ? {
-    Debian  => 'freeipa-client',
-    default => 'ipa-client',
+    'Debian' => 'freeipa-client',
+    default  => 'ipa-client',
   },
   $ldaputils     = true,
   $ldaputilspkg  = $::osfamily ? {
-    Debian  => 'ldap-utils',
-    default => 'openldap-clients',
+    'Debian' => 'ldap-utils',
+    default  => 'openldap-clients',
   },
   $idstart       = false
 ) {
@@ -159,6 +159,9 @@ class ipa (
 
   if $ipa::dns {
     @package { 'bind-dyndb-ldap':
+      ensure => installed
+    }
+    @package { 'ipa-server-dns':
       ensure => installed
     }
   }
