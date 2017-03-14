@@ -102,12 +102,12 @@ class ipa (
   $autofs        = false,
   $svrpkg        = 'ipa-server',
   $clntpkg       = $::osfamily ? {
-    Debian  => 'freeipa-client',
+    'Debian'  => 'freeipa-client',
     default => 'ipa-client',
   },
   $ldaputils     = true,
   $ldaputilspkg  = $::osfamily ? {
-    Debian  => 'ldap-utils',
+    'Debian'  => 'ldap-utils',
     default => 'openldap-clients',
   },
   $idstart       = false
