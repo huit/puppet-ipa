@@ -52,6 +52,14 @@ Defaults to 'false'.
 
 Configures a server to be an IPA replica LDAP/Kerberos node.
 
+If set to 'true', the following parameters need to be defined as well:
+
+* `adminpw`
+* `dspw`
+* `domain`
+* `realm`
+* `otp`
+
 Defaults to 'false'.
 
 ####`client`
