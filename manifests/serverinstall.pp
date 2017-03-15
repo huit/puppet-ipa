@@ -44,7 +44,7 @@ define ipa::serverinstall (
     file { '/usr/local/bin/upgrade_ipa':
         ensure  => file,
         mode    => '0700',
-        content => template('ipa/upgrade_ipa.erb')
+        content => template('ipa/upgrade_ipa.erb'),
         before => Exec["serverinstall-${host}"]
     } ->
     cron { 'perform ipa-upgrade':
@@ -83,10 +83,12 @@ define ipa::serverinstall (
     creates   => '/etc/ipa/default.conf',
   } ->
 
-  cron { 'perform ipa-upgrade':
-    ensure  => absent,
-    require => Exec["serverinstall-${host}"]
-  }
+# Jody Pearson commenting this because it clashes with line 50 (and causes puppet to fail)
+# not sure which is the correct one!
+#  cron { 'perform ipa-upgrade':
+#    ensure  => absent,
+#    require => Exec["serverinstall-${host}"]
+#  }
 
   anchor { 'ipa::serverinstall::end':
     require => Exec["serverinstall-${host}"]
