@@ -159,6 +159,9 @@ class ipa (
   }
 
   if $ipa::dns {
+    @package {'ipa-server-dns':
+      ensure => installed
+    }
     @package { 'bind-dyndb-ldap':
       ensure => installed
     }
