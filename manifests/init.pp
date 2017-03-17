@@ -47,7 +47,7 @@
 #  $clntpkg = 'ipa-client' - IPA client package.
 #  $ldaputils = true - Controls the instalation of the LDAP utilities package.
 #  $ldaputilspkg = 'openldap-clients' - LDAP utilities package.
-#
+#  $enable_firewall = true - Install and Configure iptables 
 # === Variables
 #
 #
@@ -110,7 +110,8 @@ class ipa (
     'Debian'  => 'ldap-utils',
     default => 'openldap-clients',
   },
-  $idstart       = false
+  $idstart       = false,
+  $enable_firewall = true
 ) {
 
   @package { $ipa::svrpkg:
@@ -259,7 +260,8 @@ class ipa (
       http_pin      => $ipa::http_pin,
       subject       => $ipa::subject,
       selfsign      => $ipa::selfsign,
-      idstart       => $ipa::idstart
+      idstart       => $ipa::idstart,
+      enable_firewall => $ipa::enable_firewall,
     }
 
     if ! $ipa::adminpw {
@@ -278,7 +280,8 @@ class ipa (
       adminpw     => $ipa::adminpw,
       dspw        => $ipa::dspw,
       kstart      => $ipa::kstart,
-      sssd        => $ipa::sssd
+      sssd        => $ipa::sssd,
+      enable_firewall => $ipa::enable_firewall
     }
 
     class { 'ipa::client':
