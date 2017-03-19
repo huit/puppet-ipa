@@ -39,6 +39,7 @@ class ipa::master (
   $subject       = {},
   $selfsign      = {},
   $idstart       = {},
+  $hostopt       = {},
   $enable_firewall = '',
   $enable_hostname = '',
 ) {
@@ -149,7 +150,8 @@ class ipa::master (
     ntpopt        => $ipa::master::ntpopt,
     extcaopt      => $ipa::master::extcaopt,
     idstart       => $ipa::master::generated_idstart,
-    require       => Package[$ipa::master::svrpkg]
+    require       => Package[$ipa::master::svrpkg],
+    hostopt       => $ipa::master::hostopt
   }
 
   if $extca {
