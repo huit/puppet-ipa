@@ -39,7 +39,8 @@ class ipa::master (
   $subject       = {},
   $selfsign      = {},
   $idstart       = {},
-  $enable_firewall = ''
+  $enable_firewall = '',
+  $enable_hostname = '',
 ) {
 
   if $enable_firewall {
@@ -111,6 +112,14 @@ class ipa::master (
   else {
     $dnsopt = ''
     $forwarderopts = ''
+  }
+
+  if $ipa::master::enable_hostname {
+    $hostopt = "--hostname=${::fqdn}"
+  }
+  else
+  {
+    $hostopt = ''
   }
 
   $ntpopt = $ipa::master::ntp ? {

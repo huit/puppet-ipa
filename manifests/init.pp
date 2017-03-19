@@ -47,7 +47,8 @@
 #  $clntpkg = 'ipa-client' - IPA client package.
 #  $ldaputils = true - Controls the instalation of the LDAP utilities package.
 #  $ldaputilspkg = 'openldap-clients' - LDAP utilities package.
-#  $enable_firewall = true - Install and Configure iptables 
+#  $enable_firewall = true - Install and Configure iptables ? this is not desired for docker container 
+#  $enable_hostname = true - Configure hostname during instalation? this is not desired for docker container 
 # === Variables
 #
 #
@@ -111,7 +112,8 @@ class ipa (
     default => 'openldap-clients',
   },
   $idstart       = false,
-  $enable_firewall = true
+  $enable_firewall = true,
+  $enable_hostname = true
 ) {
 
   @package { $ipa::svrpkg:
@@ -265,6 +267,7 @@ class ipa (
       selfsign      => $ipa::selfsign,
       idstart       => $ipa::idstart,
       enable_firewall => $ipa::enable_firewall,
+      enable_hostname => $ipa::enable_hostname,
     }
 
     if ! $ipa::adminpw {
