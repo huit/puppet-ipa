@@ -39,7 +39,6 @@ class ipa::master (
   $subject       = {},
   $selfsign      = {},
   $idstart       = {},
-  $hostopt       = {},
   $enable_firewall = '',
   $enable_hostname = '',
 ) {
