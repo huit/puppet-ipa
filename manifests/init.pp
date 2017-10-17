@@ -104,13 +104,13 @@ class ipa (
   $svrpkg        = 'ipa-server',
   $svrdnspkg     = 'ipa-server-dns',
   $clntpkg       = $::osfamily ? {
-    Debian  => 'freeipa-client',
-    default => 'ipa-client',
+    'Debian' => 'freeipa-client',
+    default  => 'ipa-client',
   },
   $ldaputils     = true,
   $ldaputilspkg  = $::osfamily ? {
-    Debian  => 'ldap-utils',
-    default => 'openldap-clients',
+    'Debian' => 'ldap-utils',
+    default  => 'openldap-clients',
   },
   $idstart       = false
 ) {
