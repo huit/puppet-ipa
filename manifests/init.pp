@@ -44,6 +44,7 @@
 #  $automount = false - Controls the option to configure automounter maps in LDAP.
 #  $autofs = false - Controls the option to start the autofs service and install the autofs package.
 #  $svrpkg = 'ipa-server' - IPA server package.
+#  $svrdnspkg = 'ipa-server-dns' - IPA server DNS package.
 #  $clntpkg = 'ipa-client' - IPA client package.
 #  $ldaputils = true - Controls the instalation of the LDAP utilities package.
 #  $ldaputilspkg = 'openldap-clients' - LDAP utilities package.
@@ -101,20 +102,29 @@ class ipa (
   $automount     = false,
   $autofs        = false,
   $svrpkg        = 'ipa-server',
+  $svrdnspkg     = 'ipa-server-dns',
   $clntpkg       = $::osfamily ? {
-    Debian  => 'freeipa-client',
-    default => 'ipa-client',
+    'Debian' => 'freeipa-client',
+    default  => 'ipa-client',
   },
   $ldaputils     = true,
   $ldaputilspkg  = $::osfamily ? {
-    Debian  => 'ldap-utils',
-    default => 'openldap-clients',
+    'Debian' => 'ldap-utils',
+    default  => 'openldap-clients',
   },
   $idstart       = false
 ) {
 
   @package { $ipa::svrpkg:
     ensure => installed
+  }
+  if $dns == true {
+    @package { $ipa::svrdnspkg:
+      ensure => installed,
+    }
+    $pkglst=[ $ipa::svrdnspkg,$ipa::svrpkg ]
+  } else {
+    $pkglist=[$ipa::svrpkg]
   }
 
   @package { $ipa::clntpkg:
@@ -142,18 +152,24 @@ class ipa (
   @service { 'ipa':
     ensure  => 'running',
     enable  => true,
-    require => Package[$ipa::svrpkg]
+    require => Package[$pkglist],
   }
 
   if $ipa::sssd {
-    @package { 'sssd-common':
-      ensure => installed
+    if ($::operatingsystem == 'Ubuntu' and $::lsbmajdistrelease == '12.04') {
+      $sssd_package='sssd'
+    } else {
+      $sssd_package='sssd-common'
     }
 
+    @package { 'sssd-package':
+      name   => $sssd_package,
+      ensure => present
+    }
     @service { 'sssd':
       ensure  => 'running',
       enable  => true,
-      require => Package['sssd-common']
+      require => Package['sssd-package'],
     }
   }
 
@@ -233,6 +249,7 @@ class ipa (
   if $ipa::master {
     class { 'ipa::master':
       svrpkg        => $ipa::svrpkg,
+      svrdnspkg     => $ipa::svrdnspkg,
       dns           => $ipa::dns,
       forwarders    => $ipa::forwarders,
       domain        => downcase($ipa::domain),

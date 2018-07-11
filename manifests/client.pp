@@ -91,7 +91,7 @@ class ipa::client (
 
   if $ipa::client::sssd {
     Ipa::Clientinstall<||> -> Service['sssd']
-    realize Package['sssd-common']
+    realize Package['sssd-package']
     realize Service['sssd']
   }
 
