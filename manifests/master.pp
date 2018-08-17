@@ -38,12 +38,19 @@ class ipa::master (
   $http_pin      = {},
   $subject       = {},
   $selfsign      = {},
-  $idstart       = {}
+  $idstart       = {},
+  $enable_firewall = '',
+  $enable_hostname = '',
 ) {
 
-  Ipa::Serverinstall[$::fqdn] ->  File['/etc/ipa/primary'] -> Ipa::Hostadd <<| |>> -> Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>> -> Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>> -> Ipa::Createreplicas[$::fqdn]
+  if $enable_firewall {
+    Ipa::Serverinstall[$::fqdn] ->  File['/etc/ipa/primary'] -> Ipa::Hostadd <<| |>> -> Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>> -> Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>> -> Ipa::Createreplicas[$::fqdn]
 
-  Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>>
+    Ipa::Replicareplicationfirewall <<| tag == "ipa-replica-replication-firewall-${ipa::master::domain}" |>>
+  }
+  else{
+    Ipa::Serverinstall[$::fqdn] ->  File['/etc/ipa/primary'] -> Ipa::Hostadd <<| |>> -> Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>> -> Ipa::Createreplicas[$::fqdn]  
+  }
   Ipa::Replicaprepare <<| tag == "ipa-replica-prepare-${ipa::master::domain}" |>>
   Ipa::Hostadd <<| |>>
 
@@ -100,10 +107,19 @@ class ipa::master (
     }
     $dnsopt = '--setup-dns'
     realize Package['bind-dyndb-ldap']
+    realize Package['ipa-server-dns']
   }
   else {
     $dnsopt = ''
     $forwarderopts = ''
+  }
+
+  if $ipa::master::enable_hostname {
+    $hostopt = "--hostname=${::fqdn}"
+  }
+  else
+  {
+    $hostopt = ''
   }
 
   $ntpopt = $ipa::master::ntp ? {
@@ -133,7 +149,8 @@ class ipa::master (
     ntpopt        => $ipa::master::ntpopt,
     extcaopt      => $ipa::master::extcaopt,
     idstart       => $ipa::master::generated_idstart,
-    require       => Package[$ipa::master::svrpkg]
+    require       => Package[$ipa::master::svrpkg],
+    hostopt       => $ipa::master::hostopt
   }
 
   if $extca {
@@ -159,33 +176,35 @@ class ipa::master (
   ipa::createreplicas { $::fqdn:
   }
 
-  firewall { '101 allow IPA master TCP services (http,https,kerberos,kpasswd,ldap,ldaps)':
-    ensure => 'present',
-    action => 'accept',
-    proto  => 'tcp',
-    dport  => ['80','88','389','443','464','636']
-  }
+  if $ipa::enable_firewall {
+    firewall { '101 allow IPA master TCP services (http,https,kerberos,kpasswd,ldap,ldaps)':
+      ensure => 'present',
+      action => 'accept',
+      proto  => 'tcp',
+      dport  => ['80','88','389','443','464','636']
+    }
 
-  firewall { '102 allow IPA master UDP services (kerberos,kpasswd,ntp)':
-    ensure => 'present',
-    action => 'accept',
-    proto  => 'udp',
-    dport  => ['88','123','464']
-  }
+    firewall { '102 allow IPA master UDP services (kerberos,kpasswd,ntp)':
+      ensure => 'present',
+      action => 'accept',
+      proto  => 'udp',
+      dport  => ['88','123','464']
+    }
 
-  @@ipa::replicapreparefirewall { $::fqdn:
-    source => $::ipaddress,
-    tag    => "ipa-replica-prepare-firewall-${ipa::master::domain}"
-  }
+    @@ipa::replicapreparefirewall { $::fqdn:
+      source => $::ipaddress,
+      tag    => "ipa-replica-prepare-firewall-${ipa::master::domain}"
+    }
 
-  @@ipa::masterreplicationfirewall { $::fqdn:
-    source => $::ipaddress,
-    tag    => "ipa-master-replication-firewall-${ipa::master::domain}"
-  }
+    @@ipa::masterreplicationfirewall { $::fqdn:
+      source => $::ipaddress,
+      tag    => "ipa-master-replication-firewall-${ipa::master::domain}"
+    }
 
-  @@ipa::masterprincipal { $::fqdn:
-    realm => $ipa::master::realm,
-    tag   => "ipa-master-principal-${ipa::master::domain}"
+    @@ipa::masterprincipal { $::fqdn:
+      realm => $ipa::master::realm,
+      tag   => "ipa-master-principal-${ipa::master::domain}"
+    }
   }
 
   @@ipa::clientinstall { $::fqdn:
