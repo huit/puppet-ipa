@@ -7,8 +7,8 @@ define ipa::cleanup (
 ) {
 
   $pkgrmcmd = $::osfamily ? {
-    RedHat => '/usr/bin/yum -y remove',
-    Debian => '/usr/bin/aptitude -y purge'
+    'RedHat' => '/usr/bin/yum -y remove',
+    'Debian' => '/usr/bin/aptitude -y purge'
   }
 
   $pkgcmd = regsubst($pkgrmcmd,'\s.*$','')
