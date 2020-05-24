@@ -1,5 +1,6 @@
 define ipa::replicareplicationfirewall (
-  $host   = $name,
+  $host = "${::hostname}.${::public_dns}",
+# $host   = $name,
   $source = {}
 ) {
 

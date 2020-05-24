@@ -2,44 +2,101 @@
 #
 # Installs an IPA server
 define ipa::serverinstall (
-  $host          = $name,
-  $realm         = {},
-  $domain        = {},
-  $adminpw       = {},
-  $dspw          = {},
-  $dnsopt        = {},
-  $forwarderopts = {},
-  $ntpopt        = {},
-  $extcaopt      = {},
-  $idstart       = {}
+  $host            = $name,
+  $realm           = hiera('profile::freeipa::realm'),
+  $domain          = hiera('profile::freeipa::domain'),
+  $adminpw         = hiera('profile::freeipa::adminpw'),
+  $dspw            = hiera('profile::freeipa::dspw'),
+  $dnsopt          = {},
+  $forwarderopts   = {},
+  $ntpopt          = {},
+  $extcaopt        = {},
+  $idstart         = {},
 ) {
 
   $idstartopt = "--idstart=${idstart}"
 
   anchor { 'ipa::serverinstall::start': }
 
+  file { '/var/lib/ipa/backup/latest':
+    ensure  =>  directory,
+    mode    =>  '0600',
+    before  =>  Exec["serverinstall-${host}"]
+  }
+
+  if ($::restore == "true") {
+    $install_command = shellquote('/usr/sbin/ipa-restore',"/var/lib/ipa/backup/latest",'--unattended','--password',"${adminpw}")
+    exec { 'download s3 backup':
+      command => "aws s3 cp s3://infrastructure-${::environment}-s3-credentials/ipa_backups/${::restore_dir}/ /var/lib/ipa/backup/latest/ --recursive",
+      before  => Exec["serverinstall-${host}"],
+      require => File['/var/lib/ipa/backup/latest']
+    } ->
+#    exec { 'download s3 ssh files':
+#      command => "aws s3 cp s3://infrastructure-${::environment}-s3-credentials/master_host_keys/ /etc/ssh/ --recursive",
+#      before  => Exec["serverinstall-${host}"],
+#      require => File['/var/lib/ipa/backup/latest']
+#    } ->
+    exec { 'download custodia s3':
+      command => "aws s3 cp s3://infrastructure-${::environment}-s3-credentials/custodia/ /etc/ipa/custodia/ --recursive",
+      before  => Exec["serverinstall-${host}"],
+      require => File['/var/lib/ipa/backup/latest']
+    }
+    file { '/usr/local/bin/upgrade_ipa':
+        ensure  => file,
+        mode    => '0700',
+        content => template('ipa/upgrade_ipa.erb'),
+        before => Exec["serverinstall-${host}"]
+    } ->
+    cron { 'perform ipa-upgrade':
+      ensure  => present,
+      command => '/bin/bash /usr/local/bin/upgrade_ipa',
+      minute  => '*/5',
+      user    => 'root',
+    }
+#    exec { 'download dogtag s3':
+#      command => "aws s3 cp s3://infrastructure-${::environment}-s3-credentials/.dogtag/ /root/.dogtag/ --recursive",
+#      before  => Exec["serverinstall-${host}"],
+#      require => File['/var/lib/ipa/backup/latest']
+#    } ->
+#    exec { 'download root cert s3':
+#      command => "aws s3 cp s3://infrastructure-${::environment}-s3-credentials/cacert/ /root/ --recursive",
+#      before  => Exec["serverinstall-${host}"],
+#      require => File['/var/lib/ipa/backup/latest']
+#    } ->
+#    exec { 'set key permissions':
+#      command  =>  'chown pkiuser:pkiuser /root/cacert.p12 && chown pkiuser:pkiuser /root/.dogtag/pki-tomcat/ca/pkcs12_password.conf && chown root:ssh_keys /etc/ssh/ssh_host_*key && chmod 644 /etc/ssh/ssh_host*.pub',
+#      before  => Exec["serverinstall-${host}"],
+#      require => Exec['download root cert s3']
+#    }
+  } else {
+      $install_command = shellquote('/usr/sbin/ipa-server-install',"--hostname=${host}","--realm=${realm}","--domain=${domain}","--admin-password=${adminpw}","--ds-password=${dspw}","${dnsopt}","${forwarderopts}",'--no-ntp',"${extcaopt}","${idstartopt}",'--unattended',"--ip-address=${::ipaddress}")
+  }
+
+  notify { "Installing IPA Master. Restore option is set to ${restore}, restore directory is set to ${::restore_dir}":
+    before => Exec["serverinstall-${host}"]
+  }
+
   exec { "serverinstall-${host}":
-    command   => "/usr/sbin/ipa-server-install --hostname=${host} --realm=${realm} --domain=${domain} --admin-password='${adminpw}' --ds-password='${dspw}' ${dnsopt} ${forwarderopts} ${ntpopt} ${extcaopt} ${idstartopt} --unattended",
+    command   => "${install_command}",
     timeout   => '0',
     unless    => '/usr/sbin/ipactl status >/dev/null 2>&1',
     creates   => '/etc/ipa/default.conf',
-    notify    => Ipa::Flushcache["server-${host}"],
-    logoutput => 'on_failure'
-  }
+  } ->
 
-  ipa::flushcache { "server-${host}":
-    notify  => Ipa::Adminconfig[$host],
-    require => Anchor['ipa::serverinstall::start']
-  }
-
-  ipa::adminconfig { $host:
-    realm   => $realm,
-    idstart => $idstart,
-    require => Anchor['ipa::serverinstall::start']
-  }
+# Jody Pearson commenting this because it clashes with line 50 (and causes puppet to fail)
+# not sure which is the correct one!
+#  cron { 'perform ipa-upgrade':
+#    ensure  => absent,
+#    require => Exec["serverinstall-${host}"]
+#  }
 
   anchor { 'ipa::serverinstall::end':
-    require => [Ipa::Flushcache["server-${host}"], Ipa::Adminconfig[$host]]
+    require => Exec["serverinstall-${host}"]
+  }
+
+  exec { 'authorize-home-dirs':
+    command => 'authconfig --enablemkhomedir --update',
+    require => Anchor['ipa::serverinstall::end']
   }
 
 }

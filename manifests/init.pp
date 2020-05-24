@@ -61,55 +61,50 @@
 #
 #
 class ipa (
-  $master        = false,
-  $replica       = false,
-  $client        = false,
-  $cleanup       = false,
-  $domain        = undef,
-  $realm         = undef,
-  $adminpw       = undef,
-  $dspw          = undef,
-  $otp           = undef,
-  $dns           = false,
-  $fixedprimary  = false,
-  $forwarders    = [],
-  $extca         = false,
-  $extcertpath   = undef,
-  $extcert       = undef,
-  $extcacertpath = undef,
-  $extcacert     = undef,
-  $dirsrv_pkcs12 = undef,
-  $http_pkcs12   = undef,
-  $dirsrv_pin    = undef,
-  $http_pin      = undef,
-  $subject       = undef,
-  $selfsign      = false,
-  $loadbalance   = false,
-  $ipaservers    = [],
-  $mkhomedir     = false,
-  $ntp           = false,
-  $kstart        = true,
-  $desc          = '',
-  $locality      = '',
-  $location      = '',
-  $sssdtools     = true,
-  $sssdtoolspkg  = 'sssd-tools',
-  $sssd          = true,
-  $sudo          = false,
-  $sudopw        = undef,
-  $debiansudopkg = true,
-  $automount     = false,
-  $autofs        = false,
-  $svrpkg        = 'ipa-server',
-  $clntpkg       = $::osfamily ? {
-    Debian  => 'freeipa-client',
-    default => 'ipa-client',
-  },
-  $ldaputils     = true,
-  $ldaputilspkg  = $::osfamily ? {
-    Debian  => 'ldap-utils',
-    default => 'openldap-clients',
-  },
+  $master_region   = undef,
+  $master          = undef,
+  $replica         = undef,
+  $client          = undef,
+  $cleanup         = false,
+  $domain          = $profile::freeipa::public_dns,
+  $realm           = $profile::freeipa::realm,
+  $adminpw         = $profile::freeipa::adminpw,
+  $dspw            = undef,
+  $otp             = undef,
+  $dns             = false,
+  $fixedprimary    = false,
+  $forwarders      = [],
+  $extca           = false,
+  $extcertpath     = undef,
+  $extcert         = undef,
+  $extcacertpath   = undef,
+  $extcacert       = undef,
+  $dirsrv_pkcs12   = undef,
+  $http_pkcs12     = undef,
+  $dirsrv_pin      = undef,
+  $http_pin        = undef,
+  $subject         = undef,
+  $selfsign        = false,
+  $loadbalance     = false,
+  $ipaservers      = [],
+  $mkhomedir       = true,
+  $ntp             = false,
+  $kstart          = true,
+  $desc            = '',
+  $locality        = '',
+  $location        = '',
+  $sssdtools       = true,
+  $sssdtoolspkg    = 'sssd-tools',
+  $sssd            = false,
+  $sudo            = false,
+  $sudopw          = undef,
+  $debiansudopkg   = false,
+  $automount       = false,
+  $autofs          = false,
+  $svrpkg          = 'ipa-server',
+  $clntpkg         = 'ipa-client',
+  $ldaputils       = true,
+  $ldaputilspkg    = 'openldap-clients',
   $idstart       = false
 ) {
 
@@ -232,34 +227,33 @@ class ipa (
 
   if $ipa::master {
     class { 'ipa::master':
-      svrpkg        => $ipa::svrpkg,
-      dns           => $ipa::dns,
-      forwarders    => $ipa::forwarders,
-      domain        => downcase($ipa::domain),
-      realm         => upcase($ipa::realm),
-      adminpw       => $ipa::adminpw,
-      dspw          => $ipa::dspw,
-      loadbalance   => $ipa::loadbalance,
-      ipaservers    => $ipa::ipaservers,
-      sudo          => $ipa::sudo,
-      sudopw        => $ipa::sudopw,
-      automount     => $ipa::automount,
-      autofs        => $ipa::autofs,
-      kstart        => $ipa::kstart,
-      sssd          => $ipa::sssd,
-      ntp           => $ipa::ntp,
-      extca         => $ipa::extca,
-      extcertpath   => $ipa::extcertpath,
-      extcert       => $ipa::extcert,
-      extcacertpath => $ipa::extcacertpath,
-      extcacert     => $ipa::extcacert,
-      dirsrv_pkcs12 => $ipa::dirsrv_pkcs12,
-      http_pkcs12   => $ipa::http_pkcs12,
-      dirsrv_pin    => $ipa::dirsrv_pin,
-      http_pin      => $ipa::http_pin,
-      subject       => $ipa::subject,
-      selfsign      => $ipa::selfsign,
-      idstart       => $ipa::idstart
+      svrpkg          => $ipa::svrpkg,
+      dns             => $ipa::dns,
+      forwarders      => $ipa::forwarders,
+      domain          => $ipa::domain,
+      realm           => $ipa::realm,
+      adminpw         => $profile::freeipa::adminpw,
+      loadbalance     => $ipa::loadbalance,
+      ipaservers      => $ipa::ipaservers,
+      sudo            => $ipa::sudo,
+      sudopw          => $ipa::sudopw,
+      automount       => $ipa::automount,
+      autofs          => $ipa::autofs,
+      kstart          => $ipa::kstart,
+      sssd            => $ipa::sssd,
+      ntp             => $ipa::ntp,
+      extca           => $ipa::extca,
+      extcertpath     => $ipa::extcertpath,
+      extcert         => $ipa::extcert,
+      extcacertpath   => $ipa::extcacertpath,
+      extcacert       => $ipa::extcacert,
+      dirsrv_pkcs12   => $ipa::dirsrv_pkcs12,
+      http_pkcs12     => $ipa::http_pkcs12,
+      dirsrv_pin      => $ipa::dirsrv_pin,
+      http_pin        => $ipa::http_pin,
+      subject         => $ipa::subject,
+      selfsign        => $ipa::selfsign,
+      idstart         => $ipa::idstart
     }
 
     if ! $ipa::adminpw {
@@ -274,13 +268,14 @@ class ipa (
   if $ipa::replica {
     class { 'ipa::replica':
       svrpkg      => $ipa::svrpkg,
-      domain      => downcase($ipa::domain),
+      domain      => $ipa::domain,
       adminpw     => $ipa::adminpw,
       dspw        => $ipa::dspw,
       kstart      => $ipa::kstart,
       sssd        => $ipa::sssd
     }
 
+  if $ipa::client {
     class { 'ipa::client':
       clntpkg      => $ipa::clntpkg,
       ldaputils    => $ipa::ldaputils,
@@ -292,8 +287,8 @@ class ipa (
       loadbalance  => $ipa::loadbalance,
       ipaservers   => $ipa::ipaservers,
       mkhomedir    => $ipa::mkhomedir,
-      domain       => downcase($ipa::domain),
-      realm        => upcase($ipa::realm),
+      domain       => $ipa::domain,
+      realm        => $ipa::realm,
       otp          => $ipa::otp,
       sudo         => $ipa::sudo,
       automount    => $ipa::automount,
@@ -304,7 +299,7 @@ class ipa (
       locality     => $ipa::locality,
       location     => $ipa::location
     }
-
+  }
     if ! $ipa::adminpw {
       fail('Required parameter "adminpw" missing')
     }
@@ -317,34 +312,5 @@ class ipa (
       fail('Required parameter "otp" missing')
     }
   }
-
-  if $ipa::client {
-    class { 'ipa::client':
-      clntpkg       => $ipa::clntpkg,
-      ldaputils     => $ipa::ldaputils,
-      ldaputilspkg  => $ipa::ldaputilspkg,
-      sssdtools     => $ipa::sssdtools,
-      sssdtoolspkg  => $ipa::sssdtoolspkg,
-      sssd          => $ipa::sssd,
-      domain        => downcase($ipa::domain),
-      realm         => upcase($ipa::realm),
-      otp           => $ipa::otp,
-      sudo          => $ipa::sudo,
-      debiansudopkg => $ipa::debiansudopkg,
-      automount     => $ipa::automount,
-      autofs        => $ipa::autofs,
-      mkhomedir     => $ipa::mkhomedir,
-      loadbalance   => $ipa::loadbalance,
-      ipaservers    => $ipa::ipaservers,
-      ntp           => $ipa::ntp,
-      fixedprimary  => $ipa::fixedprimary,
-      desc          => $ipa::desc,
-      locality      => $ipa::locality,
-      location      => $ipa::location
-    }
-
-    if ! $ipa::otp {
-      fail('Required parameter "otp" missing')
-    }
-  }
 }
+

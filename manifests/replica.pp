@@ -1,27 +1,19 @@
 # Class: ipa::replica
-#
 # This class configures an IPA replica
-#
-# Parameters:
-#
-# Actions:
-#
-# Requires: Exported resources, puppetlabs/puppetlabs-firewall, puppetlabs/stdlib
-#
-# Sample Usage:
-#
+
 class ipa::replica (
   $svrpkg      = {},
-  $adminpw     = {},
-  $dspw        = {},
-  $domain      = {},
+  $adminpw     = hiera('profile::freeipa::adminpw'),
+  $dspw        = hiera('profile::freeipa::dspw'),
+  $domain      = hiera('profile::freeipa::domain'),
   $kstart      = {},
-  $sssd        = {}
+  $sssd        = {},
+  $fqdn        = hiera('profile::freeipa::fqdn'),
 ) {
 
-  Class['ipa::client'] -> Ipa::Masterprincipal <<| tag == "ipa-master-principal-${ipa::replica::domain}" |>> -> Ipa::Replicapreparefirewall <<| tag == "ipa-replica-prepare-firewall-${ipa::replica::domain}" |>> -> Ipa::Masterreplicationfirewall <<| tag == "ipa-master-replication-firewall-${ipa::replica::domain}" |>> -> Ipa::Replicainstall[$::fqdn] -> Service['ipa']
+  Ipa::Masterprincipal <<| tag == "ipa-master-principal-${ipa::replica::domain}" |>> -> Ipa::Masterreplicationfirewall <<| tag == "ipa-master-replication-firewall-${ipa::replica::domain}" |>> -> Ipa::Replicainstall[$ipa::replica::fqdn] -> Service['ipa']
 
-  Ipa::Replicapreparefirewall <<| tag == "ipa-replica-prepare-firewall-${ipa::replica::domain}" |>>
+#  Ipa::Replicapreparefirewall <<| tag == "ipa-replica-prepare-firewall-${ipa::replica::domain}" |>>
   Ipa::Masterreplicationfirewall <<| tag == "ipa-master-replication-firewall-${ipa::replica::domain}" |>>
   Ipa::Masterprincipal <<| tag == "ipa-master-principal-${ipa::replica::domain}" |>>
 
@@ -39,14 +31,15 @@ class ipa::replica (
 
   if $ipa::replica::sssd {
     realize Package['sssd-common']
-    realize Service['sssd']
+#    realize Service['sssd']
   }
 
-  firewall { '101 allow IPA replica TCP services (kerberos,kpasswd,ldap,ldaps)':
+
+  firewall { '101 allow IPA replica TCP services (http,https,kerberos,kpasswd,ldap,ldaps)':
     ensure => 'present',
     action => 'accept',
     proto  => 'tcp',
-    dport  => ['88','389','464','636']
+    dport  => ['80','88','389','443','464','636']
   }
 
   firewall { '102 allow IPA replica UDP services (kerberos,kpasswd,ntp)':
@@ -56,19 +49,20 @@ class ipa::replica (
     dport  => ['88','123','464']
   }
 
-  ipa::replicainstall { $::fqdn:
-    adminpw => $ipa::replica::adminpw,
-    dspw    => $ipa::replica::dspw,
-    require => Package[$ipa::replica::svrpkg]
+  ipa::replicainstall { $fqdn:
+    domain          => $domain,
+    adminpw         => $adminpw,
+    dspw            => $dspw,
+    require         => Package[$ipa::replica::svrpkg]
   }
 
-  @@ipa::replicareplicationfirewall { $::fqdn:
+  @@ipa::replicareplicationfirewall { $ipa::replica::fqdn:
     source => $::ipaddress,
     tag    => "ipa-replica-replication-firewall-${ipa::replica::domain}"
   }
 
-  @@ipa::replicaprepare { $::fqdn:
-    dspw => $ipa::replica::dspw,
-    tag  => "ipa-replica-prepare-${ipa::replica::domain}"
-  }
+#  @@ipa::replicaprepare { $ipa::replica::fqdn:
+#    dspw            => $ipa::replica::dspw,
+#    tag             => "ipa-replica-prepare-${ipa::replica::domain}"
+#  }
 }
