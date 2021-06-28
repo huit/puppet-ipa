@@ -39,11 +39,26 @@ Available parameters.
 
 Configures a server to be an IPA master LDAP/Kerberos node.
 
+If set to 'true', the following parameters need to be defined as well:
+
+* `adminpw`
+* `dspw`
+* `domain`
+* `realm`
+
 Defaults to 'false'.
 
 ####`replica`
 
 Configures a server to be an IPA replica LDAP/Kerberos node.
+
+If set to 'true', the following parameters need to be defined as well:
+
+* `adminpw`
+* `dspw`
+* `domain`
+* `realm`
+* `otp`
 
 Defaults to 'false'.
 
@@ -51,11 +66,19 @@ Defaults to 'false'.
 
 Configures a server to be an IPA client.
 
+If set to 'true', the following parameters need to be defined as well:
+
+* `domain`
+* `realm`
+* `otp`
+
 Defaults to 'false'.
 
 ####`cleanup`
 
 Removes IPA specific packages.
+
+Mutually exclusive from master, replica and client parameters.
 
 Defaults to 'false'.
 
